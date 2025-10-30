@@ -16,6 +16,7 @@ import java.util.Date;
 @Entity
 public class Travel {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id_travel;
     @Column
     private Date fechaInicio;

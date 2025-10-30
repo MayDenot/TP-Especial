@@ -8,6 +8,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/travel")
 @RequiredArgsConstructor
-public class travelController {
-
+public class TravelController {
+    private travelService travelService;
 }
