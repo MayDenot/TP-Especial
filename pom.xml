@@ -29,6 +29,14 @@
   <properties>
     <java.version>21</java.version>
   </properties>
+  <modules>
+    <module>microservice-electric_scooter</module>
+    <module>microservice-maintenance</module>
+    <module>microservice-payment</module>
+    <module>microservice-travel</module>
+    <module>microservice-user</module>
+  </modules>
+
   <dependencies>
     <dependency>
       <groupId>org.springframework.boot</groupId>
