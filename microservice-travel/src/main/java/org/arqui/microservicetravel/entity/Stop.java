@@ -16,11 +16,11 @@ public class Stop {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id_stop;
     @Column
-    private Boolean ocupada;
+    private String direccion;
     @Column
-    private List<ElectricScooter> monopatines;
+    private String nombre;
     @Column
-    private Double latitud;
+    private Float latitud;
     @Column
-    private Double longitud;
+    private Float longitud;
 }
