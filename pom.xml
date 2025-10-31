@@ -11,7 +11,9 @@
   <groupId>org.arqui</groupId>
   <artifactId>TP-Especial</artifactId>
   <version>0.0.1-SNAPSHOT</version>
+    <packaging>pom</packaging> <!-- Nuevo! -->
   <name>TP-Especial</name>
+
   <description>TP-Especial</description>
   <url/>
   <licenses>
@@ -79,7 +81,8 @@
           <annotationProcessorPaths>
             <path>
               <groupId>org.projectlombok</groupId>
-              <artifactId>lombok</artifactId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version> <!--Nuevo -->
             </path>
           </annotationProcessorPaths>
         </configuration>
