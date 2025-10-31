@@ -32,8 +32,15 @@ public class User{
     private Integer numeroCelular;
     @Column
     private Rol rol;
-
+    @Column
+    private Float latitud;
+    @Column
+    private Float longitud;
+    @Column
+    private List<ElectricScooter> monopatines; // Todos los monopatines que ha usado el usuario (se obtiene desde Travel)
+    @Column
+    private List<Travel> viajes; // Crear model de Travel en este microservicio
     //Faltan relaciones
-    //private List<Travel> viajes;
-    private List<Account> cuentas;
+
+    //private List<Account> cuentas;
 }
