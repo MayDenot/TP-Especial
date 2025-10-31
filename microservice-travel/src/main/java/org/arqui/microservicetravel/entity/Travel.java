@@ -34,4 +34,8 @@ public class Travel {
     private Stop parada_inicio;
     @Column
     private Stop parada_fin;
+    @Column
+    private ElectricScooter monopatin;
+    @Column
+    private User usuario;
 }
