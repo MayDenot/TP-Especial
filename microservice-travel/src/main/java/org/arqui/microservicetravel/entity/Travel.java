@@ -5,8 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -17,19 +19,19 @@ public class Travel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id_travel;
     @Column
-    private Date fechaInicio;
+    private LocalDateTime fecha_hora_inicio;
     @Column
-    private Date fechaFin;
-    @Column
-    private LocalTime horaInicio;
-    @Column
-    private LocalTime horaFin;
+    private LocalDateTime fecha_hora_fin;
     @Column
     private Integer kmRecorridos;
     @Column
     private Boolean pausado;
     @Column
-    private User usuario;
+    private List<Pause> pausas;
     @Column
-    private Stop parada;
+    private Tarifa tarifa;
+    @Column
+    private Stop parada_inicio;
+    @Column
+    private Stop parada_fin;
 }
