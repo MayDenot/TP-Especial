@@ -1,5 +1,5 @@
 package org.arqui.microserviceuser;
 
 public enum Rol {
-    USUARIO, ADMINISTRADOR;
+    USUARIO, ADMINISTRADOR, MANTENIMIENTO;
 }
