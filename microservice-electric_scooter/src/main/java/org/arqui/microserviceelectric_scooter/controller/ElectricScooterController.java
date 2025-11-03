@@ -20,14 +20,14 @@ public class ElectricScooterController {
 
 
     @PostMapping
-    public ResponseEntity<Void> save(@RequestBody ElectricScooterRequestDTO electricScooter) {
+    public ResponseEntity<?> save(@RequestBody ElectricScooterRequestDTO electricScooter) {
 
         try {
             this.electricScooterService.save(electricScooter);
             return ResponseEntity.status(HttpStatus.CREATED).build();
 
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Mal formado");
         }
 
 

@@ -19,4 +19,14 @@ public class ElectricScooterService {
         ElectricScooter entity = ElectricScooterMapper.toEntity(electricScooter);
         repository.save(entity);
     }
+
+    public void modifier(ElectricScooterRequestDTO electricScooter) {
+        ElectricScooter entity = ElectricScooterMapper.toEntity(electricScooter);
+
+    }
+
+    public void deleteById(String id) {
+        repository.deleteById(id);
+    }
+
 }
