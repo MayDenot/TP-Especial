@@ -9,10 +9,10 @@
     <relativePath/> <!-- lookup parent from repository -->
   </parent>
   <groupId>org.arqui</groupId>
-  <artifactId>TP-Especial</artifactId>
+  <artifactId>microservice-admin</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  <name>TP-Especial</name>
-  <description>TP-Especial</description>
+  <name>microservice-admin</name>
+  <description>microservice-admin</description>
   <url/>
   <licenses>
     <license/>
@@ -29,16 +29,6 @@
   <properties>
     <java.version>21</java.version>
   </properties>
-  <modules>
-    <module>microservice-electric_scooter</module>
-    <module>microservice-maintenance</module>
-    <module>microservice-payment</module>
-    <module>microservice-travel</module>
-    <module>microservice-user</module>
-    <module>microservice-admin</module>
-    <module>microservice-gateway</module>
-  </modules>
-
   <dependencies>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -69,14 +59,6 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
       <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-autoconfigure</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot</artifactId>
     </dependency>
   </dependencies>
 
