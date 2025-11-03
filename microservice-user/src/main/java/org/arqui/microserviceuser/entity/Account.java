@@ -4,8 +4,6 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.arqui.microserviceuser.EstadoCuenta;
-import org.arqui.microserviceuser.TipoCuenta;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -23,10 +21,11 @@ public class Account {
     @Column
     private Double montoDisponible;
     @Column
-    private EstadoCuenta estadoCuenta;
+    private boolean activa;
     @Column
-    private TipoCuenta tipoCuenta;
-    //Falta relación
+    private String tipoCuenta;
+
+    @ManyToMany(mappedBy = "cuentas")//mapea las cuentas en la tabla usuario
     private List<User> usuarios;
 
 }
