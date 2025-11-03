@@ -30,5 +30,6 @@ public class UserRequestDTO {
     @NotNull(message = "El Rol no puede ser nulo")
     @NotEmpty(message="El campo rol es obligatorio")
     private Rol rol;
-    //Ver lo de latitud y longitud
+    private float latitud;
+    private float longitud;
 }

@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 public class AccountResponseDTO {
+    private Long id_account;
     private LocalDateTime fechaDeAlta;
     private Double montoDisponible;
     private boolean activa;
