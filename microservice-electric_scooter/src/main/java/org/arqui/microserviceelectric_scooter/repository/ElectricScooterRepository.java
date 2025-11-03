@@ -1,7 +1,6 @@
 package org.arqui.microserviceelectric_scooter.repository;
 
-import org.arqui.microserviceelectric_scooter.DTO.ElectricScooterRequestDTO;
-import org.arqui.microserviceelectric_scooter.entity.ElectricScooter;
+import org.arqui.microserviceelectric_scooter.service.DTO.Request.ElectricScooterRequestDTO;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 

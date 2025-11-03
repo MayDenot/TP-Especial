@@ -1,7 +1,7 @@
 package org.arqui.microserviceelectric_scooter.mapeador;
 
-import org.arqui.microserviceelectric_scooter.DTO.ElectricScooterRequestDTO;
-import org.arqui.microserviceelectric_scooter.DTO.ElectricScooterResponseDTO;
+import org.arqui.microserviceelectric_scooter.service.DTO.Request.ElectricScooterRequestDTO;
+import org.arqui.microserviceelectric_scooter.service.DTO.Response.ElectricScooterResponseDTO;
 import org.arqui.microserviceelectric_scooter.EstadoScooter;
 import org.arqui.microserviceelectric_scooter.entity.ElectricScooter;
 

@@ -1,16 +1,14 @@
-package org.arqui.microserviceelectric_scooter.DTO;
+package org.arqui.microserviceelectric_scooter.service.DTO.Request;
+
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ElectricScooterResponseDTO {
-    private String id;
+public class ElectricScooterRequestDTO {
     private Double longitud;
     private Double latitud;
     private Boolean habilitado;
@@ -18,9 +16,8 @@ public class ElectricScooterResponseDTO {
     private Long tiempoDeUso;
     private Double kilometrosRecorridos;
     private Boolean enParada;
-    private String codigoQR;
-    private String estado;
+    private String codigoQR; // opcional, puede generarse en el backend
+    private String estado;   // lo recibís como string (por ejemplo "DISPONIBLE")
     private Long idParadaActual;
-    private LocalDateTime fechaAlta;
-    private LocalDateTime ultimaActualizacion;
 }
+
