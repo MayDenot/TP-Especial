@@ -21,4 +21,6 @@ public class Rate {
   private Double tarifaExtra;
   @Column
   private LocalDateTime fecha;
+  @Column
+  private Boolean vigente;
 }
