@@ -36,6 +36,7 @@
     <module>microservice-travel</module>
     <module>microservice-user</module>
     <module>microservice-gateway</module>
+    <module>microservice-stop</module>
   </modules>
 
 </project>
