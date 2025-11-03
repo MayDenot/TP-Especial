@@ -6,8 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.Date;
 import java.util.List;
 
 @Data
@@ -29,13 +27,13 @@ public class Travel {
     @Column
     private List<Pause> pausas;
     @Column
-    private Tarifa tarifa;
+    private Long tarifa;
     @Column
-    private Stop parada_inicio;
+    private Long parada_inicio;
     @Column
-    private Stop parada_fin;
+    private Long parada_fin;
     @Column
-    private ElectricScooter monopatin;
+    private String monopatin;
     @Column
-    private User usuario;
+    private Long usuario;
 }
