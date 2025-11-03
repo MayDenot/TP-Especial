@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ElectricScooterResponseDTO {
-    private Long id;
+    private String id;
     private Double longitud;
     private Double latitud;
     private Boolean habilitado;
