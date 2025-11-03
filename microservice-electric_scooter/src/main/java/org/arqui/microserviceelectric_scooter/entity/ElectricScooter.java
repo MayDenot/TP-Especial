@@ -1,75 +1,46 @@
 package org.arqui.microserviceelectric_scooter.entity;
 
 
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 import org.arqui.microserviceelectric_scooter.EstadoScooter;
 
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "electric_scooters")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Document(collection = "electric_scooters") // 👈 nombre de la colección en Mongo
 public class ElectricScooter {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id; // Mongo usa IDs tipo String (ObjectId)
 
-    @Column(nullable = false)
-    private Double longitud;  // Mejor usar Double para coordenadas
-
-    @Column(nullable = false)
-    private Double latitud;   // Mejor usar Double para coordenadas
-
-    @Column(name = "habilitado", nullable = false)
+    private Double longitud;
+    private Double latitud;
     private Boolean habilitado = true;
-
-    @Column(nullable = false)
-    private Integer bateria;  // 0-100 porcentaje
-
-    @Column(name = "tiempo_uso_minutos")
-    private Long tiempoDeUso = 0L;  // en minutos
-
-    @Column(name = "kilometros_recorridos")
-    private Double kilometrosRecorridos = 0.0;  // Mejor Double para decimales
-
-    @Column(name = "en_parada", nullable = false)
+    private Integer bateria;
+    private Long tiempoDeUso = 0L;
+    private Double kilometrosRecorridos = 0.0;
     private Boolean enParada = true;
-
-    // Para el QR puedes usar el ID o generar un código único
-    @Column(name = "codigo_qr", unique = true)
     private String codigoQR;
-
-    // Campos adicionales útiles
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private EstadoScooter estado = EstadoScooter.DISPONIBLE;
-
-    @Column(name = "fecha_alta")
     private LocalDateTime fechaAlta;
-
-    @Column(name = "ultima_actualizacion")
     private LocalDateTime ultimaActualizacion;
+    private Long idParadaActual;
 
-    @Column(name = "id_parada_actual")
-    private Long idParadaActual;  // FK a la parada donde está
-
-    @PrePersist
-    protected void onCreate() {
+    public void onCreate() {
         fechaAlta = LocalDateTime.now();
         ultimaActualizacion = LocalDateTime.now();
         if (codigoQR == null) {
-            codigoQR = "QR-" + System.currentTimeMillis(); // Generación simple
+            codigoQR = "QR-" + System.currentTimeMillis();
         }
     }
 
-    @PreUpdate
-    protected void onUpdate() {
+    public void onUpdate() {
         ultimaActualizacion = LocalDateTime.now();
     }
 }

@@ -12,4 +12,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 public class ElectricScooterController {
     private ElectricScooterService electricScooterService;
+
+
+
+
+
+    public ElectricScooter save(ElectricScooter electricScooter){
+
+        return electricScooter;
+    }
 }
