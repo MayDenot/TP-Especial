@@ -1,6 +1,13 @@
 package org.arqui.microserviceelectric_scooter.entity;
 
 
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.arqui.microserviceelectric_scooter.EstadoScooter;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "electric_scooters")
