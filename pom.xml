@@ -32,11 +32,9 @@
   </properties>
   <modules>
     <module>microservice-electric_scooter</module>
-    <module>microservice-maintenance</module>
     <module>microservice-payment</module>
     <module>microservice-travel</module>
     <module>microservice-user</module>
-    <module>microservice-admin</module>
     <module>microservice-gateway</module>
   </modules>
 
