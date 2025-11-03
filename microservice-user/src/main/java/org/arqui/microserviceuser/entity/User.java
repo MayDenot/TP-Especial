@@ -33,15 +33,23 @@ public class User{
     private Integer numeroCelular;
     @Column
     private Rol rol;
+    //Esto hace falta, no se calcula en el viaje ya???
     @Column
     private Float latitud;
     @Column
     private Float longitud;
-    @Column
-    private List<ElectricScooter> monopatines; // Todos los monopatines que ha usado el usuario (se obtiene desde Travel)
-    @Column
-    private List<Travel> viajes; // Crear model de Travel en este microservicio
-    //Faltan relaciones
 
-    //private List<Account> cuentas;
+
+    @ManyToMany
+    @JoinTable(
+            name = "user_account",
+            joinColumns = @JoinColumn(name = "id_user"),
+            inverseJoinColumns = @JoinColumn(name = "id_account"))
+
+    private List<Account> cuentas;
+
+    //Hace falta un constructor inicializando el array vacío?
+
+    // Todos los monopatines que ha usado el usuario (se obtiene desde Travel)
+    // Crear model de Travel en este microservicio
 }
