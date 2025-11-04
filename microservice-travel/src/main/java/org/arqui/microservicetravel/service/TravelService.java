@@ -5,9 +5,12 @@ import org.arqui.microservicetravel.Mapper.TravelMapper;
 import org.arqui.microservicetravel.entity.Travel;
 import org.arqui.microservicetravel.repository.TravelRepository;
 import org.arqui.microservicetravel.service.DTO.Request.TravelRequestDTO;
+import org.arqui.microservicetravel.service.DTO.Response.TravelResponseDTO;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +23,32 @@ public class TravelService {
 
     public void delete(Long id){
         travelRepository.deleteById(id);
+    }
+
+    public TravelResponseDTO findById(Long id){
+        Travel travel = travelRepository.findById(id).orElseThrow(()->new RuntimeException("No existe viaje con ese ID"));
+        return TravelMapper.toResponse(travel);
+    }
+
+    public List<TravelResponseDTO> findAll(){
+        List<Travel> travels = travelRepository.findAll();
+        return travels.stream().map(TravelMapper::toResponse).collect(Collectors.toList());
+    }
+
+    public TravelResponseDTO update(Long id, TravelRequestDTO travelRequestDTO){
+        Travel travel = travelRepository.findById(id).orElseThrow(()->new RuntimeException("No existe viaje con ese ID"));
+        travel.setFecha_hora_inicio(travelRequestDTO.getFecha_hora_inicio());
+        travel.setFecha_hora_fin(travelRequestDTO.getFecha_hora_fin());
+        travel.setKmRecorridos(travelRequestDTO.getKmRecorridos());
+        travel.setPausado(travelRequestDTO.getPausado());
+        travel.setTarifa(travelRequestDTO.getTarifa());
+        travel.setParada_inicio(travelRequestDTO.getParada_inicio());
+        travel.setParada_fin(travelRequestDTO.getParada_fin());
+        travel.setMonopatin(travelRequestDTO.getMonopatin());
+        travel.setUsuario(travelRequestDTO.getUsuario());
+
+        Travel updatedTravel = travelRepository.save(travel);
+        return TravelMapper.toResponse(updatedTravel);
     }
 
     public List<String> buscarPorCantidadDeViajesYAño(Integer cantidadViajes, Integer anio) {
