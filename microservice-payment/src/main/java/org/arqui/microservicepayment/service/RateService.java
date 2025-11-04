@@ -7,11 +7,10 @@ import org.arqui.microservicepayment.entity.Rate;
 import org.arqui.microservicepayment.mapper.RateMapper;
 import org.arqui.microservicepayment.repository.RateRepository;
 import org.arqui.microservicepayment.service.DTO.request.RateRequestDTO;
-import org.springframework.data.repository.Repository;
+import org.arqui.microservicepayment.service.DTO.response.RateResponseDTO;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -30,7 +29,7 @@ public class RateService {
   }
 
   @Transactional
-  public void update(Long id, RateRequestDTO rate) {
+  public RateResponseDTO update(Long id, RateRequestDTO rate) {
     Rate tarifa = rateRepository.findById(id)
             .orElseThrow(() -> new EntityNotFoundException("Tarifa no encontrada con id: " + id));
 
@@ -39,6 +38,7 @@ public class RateService {
     tarifa.setFecha(rate.getFecha());
 
     rateRepository.save(tarifa);
+    return RateMapper.toResponse(tarifa);
   }
 
   @Transactional
