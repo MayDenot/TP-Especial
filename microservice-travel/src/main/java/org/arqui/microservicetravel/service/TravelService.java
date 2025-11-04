@@ -52,8 +52,7 @@ public class TravelService {
         travel.setMonopatin(travelRequestDTO.getMonopatin());
         travel.setUsuario(travelRequestDTO.getUsuario());
 
-        Travel updatedTravel = travelRepository.save(travel);
-        return TravelMapper.toResponse(updatedTravel);
+        return TravelMapper.toResponse(travelRepository.save(travel));
     }
 
     @Transactional(readOnly = true)

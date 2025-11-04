@@ -22,7 +22,7 @@ public class RateController {
     }
   }
 
-  @DeleteMapping("/rate/{id}")
+  @DeleteMapping("/{id}")
   public void delete(@PathVariable Long id) throws Exception {
     try {
       rateService.delete(id);
@@ -31,7 +31,7 @@ public class RateController {
     }
   }
 
-  @PutMapping("/rate/{id}")
+  @PutMapping("/{id}")
   public void update(@PathVariable Long id, @RequestBody RateRequestDTO rateDTO) throws Exception {
     try {
       rateService.update(id, rateDTO);
@@ -40,7 +40,7 @@ public class RateController {
     }
   }
 
-  @PutMapping("/rate/enable/{fecha}")
+  @PutMapping("/enable/{fecha}")
   public void habilitarNuevosPreciosAPartirDe(@RequestParam LocalDateTime fecha) throws Exception {
     try {
       rateService.habilitarNuevosPreciosAPartirDe(fecha);
