@@ -3,20 +3,22 @@ package org.arqui.microserviceelectric_scooter.controller;
 import lombok.RequiredArgsConstructor;
 import org.arqui.microserviceelectric_scooter.entity.ElectricScooter;
 import org.arqui.microserviceelectric_scooter.service.DTO.Request.ElectricScooterRequestDTO;
+import org.arqui.microserviceelectric_scooter.service.DTO.Response.ElectricScooterResponseDTO;
 import org.arqui.microserviceelectric_scooter.service.ElectricScooterService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/scooter")
 @RequiredArgsConstructor
 
 public class ElectricScooterController {
-    private ElectricScooterService electricScooterService;
+    private final ElectricScooterService electricScooterService;
+
+
 
 
     @PostMapping
@@ -25,11 +27,49 @@ public class ElectricScooterController {
         try {
             this.electricScooterService.save(electricScooter);
             return ResponseEntity.status(HttpStatus.CREATED).build();
-
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Mal formado");
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> modifier(
+            @PathVariable String id,
+            @RequestBody ElectricScooterRequestDTO electricScooterDTO) {
+        try {
+
+            electricScooterService.modifier(id, electricScooterDTO);
+            return ResponseEntity.status(HttpStatus.OK).body("actualizado con exito ");
+
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("no se pudo actualizar");
         }
 
-
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> eliminar(@PathVariable String id) {
+        try {
+            this.electricScooterService.deleteById(id);
+            return ResponseEntity.status(HttpStatus.OK).body("eliminado con exito");
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("no se pudo eliminar");
+        }
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ElectricScooterResponseDTO> getById(@PathVariable String id) {
+        ElectricScooterResponseDTO scooter = this.electricScooterService.getById(id);
+        return ResponseEntity.ok(scooter); // 200 OK
+    }
+
+
+
+
+
+
+
 }
