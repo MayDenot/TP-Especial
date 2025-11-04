@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/travel")
+@RequestMapping("/api/travels")
 @RequiredArgsConstructor
 public class TravelController {
     private TravelService travelService;
@@ -26,6 +26,12 @@ public class TravelController {
     public ResponseEntity<String> deleteTravel(@PathVariable Long id) {
         travelService.delete(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Viaje eliminado con exito");
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<String> updateTravel(@PathVariable Long id, @RequestBody TravelRequestDTO travel) {
+        travelService.update(id, travel);
+        return ResponseEntity.status(HttpStatus.OK).body("Viaje actualizado con exito");
     }
 
     @GetMapping("/{id}")
