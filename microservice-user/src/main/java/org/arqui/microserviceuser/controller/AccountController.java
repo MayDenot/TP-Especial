@@ -18,7 +18,7 @@ public class AccountController {
     private final AccountService accountService;
 
     @PostMapping
-    public ResponseEntity<AccountResponseDTO> save(@Valid @RequestBody AccountRequestDTO accountRequestDTO) {
+    public ResponseEntity<AccountResponseDTO> save(@RequestBody AccountRequestDTO accountRequestDTO) {
         try {
             AccountResponseDTO nuevaCuenta = accountService.save(accountRequestDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body(nuevaCuenta);
@@ -28,7 +28,7 @@ public class AccountController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<AccountResponseDTO> update(@PathVariable Long id, @Valid @RequestBody AccountRequestDTO accountRequestDTO) {
+    public ResponseEntity<AccountResponseDTO> update(@PathVariable Long id, @RequestBody AccountRequestDTO accountRequestDTO) {
         try {
             AccountResponseDTO cuentaActualizada = accountService.update(id, accountRequestDTO);
             return ResponseEntity.ok(cuentaActualizada);
@@ -70,4 +70,18 @@ public class AccountController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+    //Como administrador quiero Anular/Desactivar cuenta
+    @PutMapping("/{id}/anular")
+    public ResponseEntity<AccountResponseDTO> anular(@PathVariable Long id) {
+        try {
+            AccountResponseDTO cuentaAnulada= accountService.anularCuenta(id);
+            return ResponseEntity.ok(cuentaAnulada);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+    }
+
 }

@@ -33,7 +33,6 @@ public class User{
     private Integer numeroCelular;
     @Column
     private Rol rol;
-    //Esto hace falta, no se calcula en el viaje ya???
     @Column
     private Float latitud;
     @Column

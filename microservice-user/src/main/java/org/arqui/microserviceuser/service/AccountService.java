@@ -60,4 +60,14 @@ public class AccountService {
                 .toList();
     }
 
+    // Anular/Desactivar cuenta
+    @Transactional
+    public AccountResponseDTO anularCuenta(Long id) {
+        Account cuenta = accountRepository.findById(id).orElseThrow(() -> new RuntimeException("Cuenta no encontrada con id: " + id));
+
+        cuenta.setActiva(false);
+        Account cuentaAnulada = accountRepository.save(cuenta);
+        return AccountMapper.toResponse(cuentaAnulada);
+    }
+
 }
