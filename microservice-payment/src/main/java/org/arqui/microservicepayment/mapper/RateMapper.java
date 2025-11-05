@@ -11,6 +11,7 @@ public class RateMapper {
     rate.setTarifa(dto.getTarifa());
     rate.setTarifaExtra(dto.getTarifaExtra());
     rate.setFecha(dto.getFecha());
+    rate.setVigente(dto.getVigente());
     return rate;
   }
 
@@ -19,7 +20,8 @@ public class RateMapper {
             rate.getId(),
             rate.getTarifa(),
             rate.getTarifaExtra(),
-            rate.getFecha()
+            rate.getFecha(),
+            rate.getVigente()
     );
   }
 }

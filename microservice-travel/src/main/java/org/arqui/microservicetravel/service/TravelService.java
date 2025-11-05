@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class TravelService {
-    private TravelRepository travelRepository;
+    private final TravelRepository travelRepository;
 
     @Transactional
     public void save(TravelRequestDTO travel){

@@ -14,4 +14,5 @@ public class RateResponseDTO {
   private Double tarifa;
   private Double tarifaExtra;
   private LocalDateTime fecha;
+  private Boolean vigente;
 }
