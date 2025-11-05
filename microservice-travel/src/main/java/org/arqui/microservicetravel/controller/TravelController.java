@@ -14,40 +14,66 @@ import java.util.List;
 @RequestMapping("/api/travels")
 @RequiredArgsConstructor
 public class TravelController {
-    private TravelService travelService;
+    private final TravelService travelService;
 
     @PostMapping
     public ResponseEntity<String> saveTravel(@RequestBody TravelRequestDTO travel) {
-        travelService.save(travel);
-        return ResponseEntity.status(HttpStatus.CREATED).body("Viaje creado con exito");
+        try {
+            travelService.save(travel);
+            return ResponseEntity.status(HttpStatus.CREATED).body("Viaje creado con exito");
+        }
+        catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteTravel(@PathVariable Long id) {
-        travelService.delete(id);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Viaje eliminado con exito");
+        try {
+            travelService.delete(id);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Viaje eliminado con exito");
+        }
+        catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error: " + e.getMessage());
+        }
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<String> updateTravel(@PathVariable Long id, @RequestBody TravelRequestDTO travel) {
-        travelService.update(id, travel);
-        return ResponseEntity.status(HttpStatus.OK).body("Viaje actualizado con exito");
+        try {
+            travelService.update(id, travel);
+            return ResponseEntity.status(HttpStatus.OK).body("Viaje actualizado con exito");
+        }
+        catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error: " + e.getMessage());
+        }
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TravelResponseDTO> getTravel(@RequestParam Long id) {
-        TravelResponseDTO travel = travelService.findById(id);
-        return ResponseEntity.ok(travel);
+    public ResponseEntity<?> getTravel(@PathVariable Long id) {
+        try{
+            TravelResponseDTO travel = travelService.findById(id);
+            return ResponseEntity.ok(travel);
+        }
+        catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error: " + e.getMessage());
+        }
     }
 
     @GetMapping
-    public ResponseEntity<List<TravelResponseDTO>> getAllTravels() {
-        List<TravelResponseDTO> travels = travelService.findAll();
-        return ResponseEntity.ok(travels);
+    public ResponseEntity<?> getAllTravels() {
+        try {
+            List<TravelResponseDTO> travels = travelService.findAll();
+            return ResponseEntity.ok(travels);
+        }
+        catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error: " + e.getMessage());
+        }
+
     }
 
     @GetMapping("/cantidad/{cantidad}/anio/{anio}")
-    public ResponseEntity<?> buscarPorCantidadDeViajesYAño(@RequestBody Integer cantidad, @RequestBody Integer anio) throws Exception {
+    public ResponseEntity<?> buscarPorCantidadDeViajesYAño(@PathVariable Integer cantidad, @PathVariable Integer anio) throws Exception {
         try {
              List<String> monopatines = travelService.buscarPorCantidadDeViajesYAño(cantidad, anio);
              return ResponseEntity.ok(monopatines);

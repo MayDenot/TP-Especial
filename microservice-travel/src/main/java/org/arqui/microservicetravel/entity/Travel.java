@@ -24,8 +24,10 @@ public class Travel {
     private Integer kmRecorridos;
     @Column
     private Boolean pausado;
-    @Column
+    
+    @OneToMany(mappedBy = "travel", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Pause> pausas;
+    
     @Column
     private Long tarifa;
     @Column
