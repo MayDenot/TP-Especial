@@ -19,12 +19,10 @@ public class User{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id_user;
     @Column
-    // El profe no lo puso
     private String nombreUsuario;
     @Column
     private String nombre;
     @Column
-    // El profe usar nombre para ambos
     private String apellido;
     @Column
     private String email;
