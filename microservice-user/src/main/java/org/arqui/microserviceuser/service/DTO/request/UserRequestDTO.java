@@ -27,8 +27,6 @@ public class UserRequestDTO {
     @NotEmpty(message = "El email es obligatorio")
     private String email;
     private Integer numeroCelular;
-    @NotNull(message = "El Rol no puede ser nulo")
-    @NotEmpty(message="El campo rol es obligatorio")
     private Rol rol;
     private float latitud;
     private float longitud;
