@@ -11,8 +11,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("/api/scooter")
+@RequestMapping("/api/scooters")
 @RequiredArgsConstructor
 
 public class ElectricScooterController {
@@ -26,7 +28,7 @@ public class ElectricScooterController {
 
         try {
             this.electricScooterService.save(electricScooter);
-            return ResponseEntity.status(HttpStatus.CREATED).build();
+            return ResponseEntity.status(HttpStatus.CREATED).body("scooter creado con exito");
         } catch (Exception e) {
 
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
@@ -64,6 +66,13 @@ public class ElectricScooterController {
     public ResponseEntity<ElectricScooterResponseDTO> getById(@PathVariable String id) {
         ElectricScooterResponseDTO scooter = this.electricScooterService.getById(id);
         return ResponseEntity.ok(scooter); // 200 OK
+    }
+
+
+    @GetMapping("/cantidad/{cantidad}/anio/{anio}")
+    public ResponseEntity<List<ElectricScooterResponseDTO>> obtenerMonopatinesDeTravel(@PathVariable Integer cantidad, @PathVariable Integer anio) {
+        List<ElectricScooterResponseDTO> monopatines = this.electricScooterService.obtenerMonopatinesByAnioYCantidad(cantidad, anio);
+        return ResponseEntity.ok(monopatines);
     }
 
 

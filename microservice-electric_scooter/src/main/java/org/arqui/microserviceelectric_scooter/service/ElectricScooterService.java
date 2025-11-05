@@ -3,6 +3,7 @@ package org.arqui.microserviceelectric_scooter.service;
 import lombok.RequiredArgsConstructor;
 import org.arqui.microserviceelectric_scooter.EstadoScooter;
 import org.arqui.microserviceelectric_scooter.entity.ElectricScooter;
+import org.arqui.microserviceelectric_scooter.feignClient.TravelCliente;
 import org.arqui.microserviceelectric_scooter.mapeador.ElectricScooterMapper;
 import org.arqui.microserviceelectric_scooter.repository.ElectricScooterRepository;
 import org.arqui.microserviceelectric_scooter.service.DTO.Request.ElectricScooterRequestDTO;
@@ -11,16 +12,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Service
 public class ElectricScooterService {
 
-
+    private final TravelCliente travelClient;
     private final  ElectricScooterRepository repository;
 
 
-    public ElectricScooterService(ElectricScooterRepository repository) {
+    public ElectricScooterService(TravelCliente travelClient, ElectricScooterRepository repository) {
+        this.travelClient = travelClient;
         this.repository = repository;
     }
 
@@ -74,5 +78,18 @@ public class ElectricScooterService {
     }
 
 
+    public List<ElectricScooterResponseDTO> obtenerMonopatinesByAnioYCantidad(Integer cantidad, Integer anio) {
+        List<String> ids = travelClient.obtenerIdsMonopatines(cantidad, anio);
+        List<ElectricScooterResponseDTO> resultado = new ArrayList<>();
 
-}
+        for (String id : ids) {
+            repository.findById(id).ifPresent(entity -> {
+                resultado.add(ElectricScooterMapper.toResponse(entity)); // ✅ usamos el mapper
+            });
+        }
+
+        return resultado;
+    }
+
+    }
+
