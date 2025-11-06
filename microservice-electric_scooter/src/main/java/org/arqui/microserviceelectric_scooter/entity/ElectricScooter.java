@@ -37,6 +37,8 @@ public class ElectricScooter {
     private LocalDateTime fechaAlta;
     private LocalDateTime ultimaActualizacion;
     private Long idParadaActual;
+    private Long tiempoEnMovimiento = 0L;
+    private Long tiempoEnPausa = 0L;
     @GeoSpatialIndexed(type = GeoSpatialIndexType.GEO_2DSPHERE)
     private Map<String, Object> ubicacion;
 

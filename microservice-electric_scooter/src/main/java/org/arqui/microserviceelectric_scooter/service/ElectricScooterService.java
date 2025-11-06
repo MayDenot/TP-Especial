@@ -8,6 +8,7 @@ import org.arqui.microserviceelectric_scooter.mapeador.ElectricScooterMapper;
 import org.arqui.microserviceelectric_scooter.repository.ElectricScooterRepository;
 import org.arqui.microserviceelectric_scooter.service.DTO.Request.ElectricScooterRequestDTO;
 import org.arqui.microserviceelectric_scooter.service.DTO.Response.ElectricScooterResponseDTO;
+import org.arqui.microserviceelectric_scooter.service.DTO.Response.ReporteUsoScooterDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -106,5 +107,10 @@ public class ElectricScooterService {
     }
 
 
+    @Transactional(readOnly = true)
+    public List<ReporteUsoScooterDTO> generarReporteUso() {
+        List<ElectricScooter> resultado = repository.findAll();
+        return ElectricScooterMapper.toReporteBasico(resultado);
 
+    }
 }

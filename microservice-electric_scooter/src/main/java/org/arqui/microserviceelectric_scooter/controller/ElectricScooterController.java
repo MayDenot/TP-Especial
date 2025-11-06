@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.arqui.microserviceelectric_scooter.entity.ElectricScooter;
 import org.arqui.microserviceelectric_scooter.service.DTO.Request.ElectricScooterRequestDTO;
 import org.arqui.microserviceelectric_scooter.service.DTO.Response.ElectricScooterResponseDTO;
+import org.arqui.microserviceelectric_scooter.service.DTO.Response.ReporteUsoScooterDTO;
 import org.arqui.microserviceelectric_scooter.service.ElectricScooterService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -108,6 +109,26 @@ public class ElectricScooterController {
         List<ElectricScooterResponseDTO> monopatines = this.electricScooterService.obtenerMonopatinesByAnioYCantidad(cantidad, anio);
         return ResponseEntity.ok(monopatines);
     }
+
+
+    @GetMapping("/reporte")
+    public ResponseEntity<List<ReporteUsoScooterDTO>> obtenerMonopatines() {
+        try {
+            List<ReporteUsoScooterDTO> reporte = electricScooterService.generarReporteUso();
+
+            if (reporte.isEmpty()) {
+                return ResponseEntity.noContent().build();
+            }
+
+            return ResponseEntity.ok(reporte);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+
+
+
 
 
 

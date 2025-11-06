@@ -4,7 +4,10 @@ import org.arqui.microserviceelectric_scooter.service.DTO.Request.ElectricScoote
 import org.arqui.microserviceelectric_scooter.service.DTO.Response.ElectricScooterResponseDTO;
 import org.arqui.microserviceelectric_scooter.EstadoScooter;
 import org.arqui.microserviceelectric_scooter.entity.ElectricScooter;
+import org.arqui.microserviceelectric_scooter.service.DTO.Response.ReporteUsoScooterDTO;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
+
+import java.util.List;
 
 public class ElectricScooterMapper {
 
@@ -45,4 +48,30 @@ public class ElectricScooterMapper {
                 scooter.getUltimaActualizacion()
         );
     }
+
+
+    public static ReporteUsoScooterDTO toReporte(ElectricScooter scooter) {
+        long total = scooter.getTiempoDeUso() != null ? scooter.getTiempoDeUso() : 0L;
+        long tiempoEnMovimiento = scooter.getEnParada() ? 0L : total;
+        long tiempoEnPausa = scooter.getEnParada() ? total : 0L;
+
+        return new ReporteUsoScooterDTO(
+                scooter.getId(),
+                scooter.getKilometrosRecorridos(),
+                total,
+                tiempoEnMovimiento,
+                tiempoEnPausa,
+                scooter.getBateria() != null ? scooter.getBateria().doubleValue() : 0.0,
+                scooter.getEstado() != null ? scooter.getEstado().name() : "DESCONOCIDO"
+        );
+    }
+
+
+
+    public static List<ReporteUsoScooterDTO> toReporteBasico(List<ElectricScooter> scooters) {
+        return scooters.stream()
+                .map(ElectricScooterMapper::toReporte)
+                .toList();
+    }
+
 }
