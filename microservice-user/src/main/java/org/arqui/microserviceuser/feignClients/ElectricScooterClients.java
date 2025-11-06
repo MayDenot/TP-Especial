@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import java.util.List;
 
-@FeignClient(name="microservice-electric_scooter", url = "http://localhost:8082" )
+@FeignClient(name="microservice-electricScooter", url = "http://localhost:8082" )
 public interface ElectricScooterClients {
 
     //g-Como usuario quiero encontrar los monopatines cercanos a mi zona

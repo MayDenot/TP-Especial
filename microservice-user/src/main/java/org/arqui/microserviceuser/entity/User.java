@@ -27,7 +27,6 @@ public class User{
     @Column
     private String email;
     @Column
-    // El profe no lo puso
     private Integer numeroCelular;
     @Column
     private Rol rol;

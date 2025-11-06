@@ -81,6 +81,11 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
+    //e-Como administrador quiero ver los usuarios que más utilizan los monopatines, filtrado por
+    //período y por tipo de usuario.
+    @Transactional(readOnly = true)
+    public List<UserResponseDTO> obtenerUsuariosMasViajesPorPeriodoYTipoCuenta(
+
     //g-Como usuario quiero encontrar los monopatines cercanos a mi zona
     @Transactional(readOnly = true)
     public List<ElectricScooterResponseDTO> obtenerMonopatinesCercanos(Double latitud, Double longitud) {
