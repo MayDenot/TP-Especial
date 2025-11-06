@@ -2,6 +2,7 @@ package org.arqui.microserviceuser.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.arqui.microserviceelectric_scooter.service.DTO.Response.ElectricScooterResponseDTO;
 import org.arqui.microserviceuser.Rol;
 import org.arqui.microserviceuser.service.DTO.request.UserRequestDTO;
 import org.arqui.microserviceuser.service.DTO.response.UserResponseDTO;
@@ -82,7 +83,15 @@ public class UserController {
         }
     }
 
-
-
+    //g-Como usuario quiero encontrar los monopatines cercanos a mi zona
+    @GetMapping("/cercanos/{latitud}/{longitud}")
+    public ResponseEntity<List<ElectricScooterResponseDTO>> obtenerMonopatinesCercanos(@PathVariable Double latitud, @PathVariable Double longitud) {
+        try {
+            List<ElectricScooterResponseDTO> monopatines = userService.obtenerMonopatinesCercanos(latitud, longitud);
+            return ResponseEntity.ok(monopatines);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+    }
 
 }
