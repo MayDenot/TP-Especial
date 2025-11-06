@@ -3,12 +3,20 @@ package org.arqui.microservicetravel.service;
 import lombok.RequiredArgsConstructor;
 import org.arqui.microservicetravel.Mapper.TravelMapper;
 import org.arqui.microservicetravel.entity.Travel;
+import org.arqui.microservicetravel.feignClient.AccountClient;
+import org.arqui.microservicetravel.feignClient.RateClient;
 import org.arqui.microservicetravel.repository.TravelRepository;
 import org.arqui.microservicetravel.service.DTO.Request.TravelRequestDTO;
+import org.arqui.microservicetravel.service.DTO.Response.AccountInfoResponseDTO;
+import org.arqui.microservicetravel.service.DTO.Response.RateInfoResponseDTO;
 import org.arqui.microservicetravel.service.DTO.Response.TravelResponseDTO;
+import org.arqui.microservicetravel.service.DTO.Response.ViajeConCostoResponseDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.arqui.microservicetravel.entity.Pause;
+
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -18,6 +26,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class TravelService {
     private final TravelRepository travelRepository;
+    private final RateClient rateFeignClient;
+    private final AccountClient accountFeignClient;
 
     @Transactional
     public void save(TravelRequestDTO travel){
@@ -70,5 +80,61 @@ public class TravelService {
     @Transactional(readOnly = true)
     public List<Long> buscarTarifas(LocalDateTime inicio, LocalDateTime fin) {
         return travelRepository.buscarTarifas(inicio, fin);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ViajeConCostoResponseDTO> calcularCostosDeViajes(Integer anio, Integer mesInicio, Integer mesFin) {
+        List<Travel> viajes = travelRepository.buscarViajesParaFacturacion(anio, mesInicio, mesFin);
+        
+        return viajes.stream()
+                .map(this::calcularCostoViaje)
+                .collect(Collectors.toList());
+    }
+    
+    private ViajeConCostoResponseDTO calcularCostoViaje(Travel viaje) {
+        // 1. Obtener tarifa vigente en la fecha del viaje
+        RateInfoResponseDTO rate = rateFeignClient.getRateByDate(viaje.getFecha_hora_inicio());
+        
+        // 2. Obtener información de la cuenta
+        AccountInfoResponseDTO account = accountFeignClient.getAccountByUserId(viaje.getUsuario());
+        
+        // 3. Calcular costo base
+        Double costoBase = rate.getTarifa();
+        Double costoExtra = 0.0;
+        boolean tienePausaLarga = false;
+        
+        // 4. Verificar pausas > 15 minutos
+        if (viaje.getPausas() != null && !viaje.getPausas().isEmpty()) {
+            for (Pause pausa : viaje.getPausas()) {
+                if (pausa.getHora_inicio() != null && pausa.getHora_fin() != null) {
+                    long minutosEnPausa = Duration.between(
+                        pausa.getHora_inicio(), 
+                        pausa.getHora_fin()
+                    ).toMinutes();
+                    
+                    if (minutosEnPausa > 15) {
+                        costoExtra += rate.getTarifaExtra();
+                        tienePausaLarga = true;
+                    }
+                }
+            }
+        }
+        
+        // 5. Costo total (sin aplicar descuentos de premium aún)
+        Double costoTotal = costoBase + costoExtra;
+        
+        // 6. Crear DTO
+        ViajeConCostoResponseDTO dto = new ViajeConCostoResponseDTO();
+        dto.setId_travel(viaje.getId_travel());
+        dto.setFecha_hora_inicio(viaje.getFecha_hora_inicio());
+        dto.setKmRecorridos(viaje.getKmRecorridos());
+        dto.setUsuario(viaje.getUsuario());
+        dto.setTipoCuenta(account.getTipoCuenta());
+        dto.setCostoBase(costoBase);
+        dto.setCostoExtra(costoExtra);
+        dto.setCostoTotal(costoTotal);
+        dto.setTienePausaLarga(tienePausaLarga);
+        
+        return dto;
     }
 }

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import org.arqui.microservicetravel.service.DTO.Response.ViajeConCostoResponseDTO;
 
 @RestController
 @RequestMapping("/api/travels")
@@ -104,5 +105,15 @@ public class TravelController {
         catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error: " + e.getMessage());
         }
+    }
+
+    @GetMapping("/viajes-con-costos")
+    public ResponseEntity<List<ViajeConCostoResponseDTO>> getViajesConCostos(
+            @RequestParam Integer anio,
+            @RequestParam Integer mesInicio,
+            @RequestParam Integer mesFin) {
+        
+        List<ViajeConCostoResponseDTO> viajes = travelService.calcularCostosDeViajes(anio, mesInicio, mesFin);
+        return ResponseEntity.ok(viajes);
     }
 }

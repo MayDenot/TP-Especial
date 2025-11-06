@@ -38,4 +38,16 @@ public interface TravelRepository extends JpaRepository<Travel, Long> {
         ORDER BY t.fecha_hora_inicio
 """)
     List<Long> buscarTarifas(@Param("inicio") LocalDateTime inicio, @Param("fin") LocalDateTime fin);
+
+    @Query("""
+        SELECT t
+        FROM Travel t
+        LEFT JOIN FETCH t.pausas
+        WHERE YEAR(t.fecha_hora_inicio) = :anio
+        AND MONTH(t.fecha_hora_inicio) BETWEEN :mesInicio AND :mesFin
+        ORDER BY t.fecha_hora_inicio
+    """)
+    List<Travel> buscarViajesParaFacturacion(@Param("anio") Integer anio, 
+                                              @Param("mesInicio") Integer mesInicio, 
+                                              @Param("mesFin") Integer mesFin);
 }
