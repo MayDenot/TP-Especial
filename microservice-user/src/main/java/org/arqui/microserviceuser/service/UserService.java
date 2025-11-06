@@ -13,8 +13,6 @@ import org.arqui.microserviceuser.service.DTO.response.ElectricScooterResponseDT
 import org.arqui.microserviceuser.service.DTO.response.UserResponseDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;

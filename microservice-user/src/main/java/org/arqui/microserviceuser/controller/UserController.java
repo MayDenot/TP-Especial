@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -80,6 +81,24 @@ public class UserController {
             return ResponseEntity.ok(usuarios);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+    }
+
+    //e-Como administrador quiero ver los usuarios que más utilizan los monopatines, filtrado por
+    //período y por tipo de usuario.
+    @GetMapping("/fechaInicio/{inicio}/fechaFin/{fin}")
+    public ResponseEntity<List<UserResponseDTO>> obtenerUsuariosMasViajesPorPeriodoYTipoCuenta(
+            @PathVariable LocalDate inicio,
+            @PathVariable LocalDate fin,
+            @PathVariable String tipoCuenta) {
+        try {
+            List<UserResponseDTO> usuarios =
+                    userService.obtenerUsuariosMasViajesPorPeriodoYTipoCuenta(inicio, fin, tipoCuenta);
+            return ResponseEntity.ok(usuarios);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
