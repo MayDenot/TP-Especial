@@ -10,6 +10,6 @@ import java.util.List;
 public interface ElectricScooterClients {
 
     //g-Como usuario quiero encontrar los monopatines cercanos a mi zona
-    @GetMapping("/api/scooters/cercanos/{latitud}/{longitud}")
+    @GetMapping("/api/scooters/cercanos/latitud{latitud}/longitud{longitud}")
     List<ElectricScooterResponseDTO> obtenerMonopatinesCercanos(@PathVariable Double latitud, @PathVariable Double longitud);
 }
