@@ -1,7 +1,7 @@
 package org.arqui.microserviceuser.service;
 
 import lombok.RequiredArgsConstructor;
-import org.arqui.microserviceelectric_scooter.service.DTO.Response.ElectricScooterResponseDTO;
+
 import org.arqui.microserviceuser.Rol;
 import org.arqui.microserviceuser.entity.User;
 import org.arqui.microserviceuser.feignClients.ElectricScooterClients;
@@ -9,6 +9,7 @@ import org.arqui.microserviceuser.feignClients.TravelClients;
 import org.arqui.microserviceuser.mapper.UserMapper;
 import org.arqui.microserviceuser.repository.UserRepository;
 import org.arqui.microserviceuser.service.DTO.request.UserRequestDTO;
+import org.arqui.microserviceuser.service.DTO.response.ElectricScooterResponseDTO;
 import org.arqui.microserviceuser.service.DTO.response.UserResponseDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -94,7 +95,7 @@ public class UserService {
             throw new RuntimeException("No se encontraron usuarios con viajes en el período indicado.");
         }
 
-        // Usar la query personalizada del repositorio (filtra en la BD)
+
         List<User> usuarios = userRepository.findByIdsAndTipoCuenta(idsUsuarios, tipoCuenta);
 
         if (usuarios.isEmpty()) {
@@ -105,7 +106,6 @@ public class UserService {
                 .map(UserMapper::toResponse)
                 .toList();
     }
-
 
     //g-Como usuario quiero encontrar los monopatines cercanos a mi zona
     @Transactional(readOnly = true)

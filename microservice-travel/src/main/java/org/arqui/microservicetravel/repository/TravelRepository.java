@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -29,4 +30,12 @@ public interface TravelRepository extends JpaRepository<Travel, Long> {
         ORDER BY COUNT(t.id_travel) DESC
 """)
     List<Long> buscarUsuariosConMasViajes(@Param("inicio")LocalDate inicio, @Param("fin") LocalDate fin);
+
+    @Query("""
+        SELECT t.tarifa
+        FROM Travel t
+        WHERE t.fecha_hora_inicio BETWEEN :inicio AND :fin
+        ORDER BY t.fecha_hora_inicio
+""")
+    List<Long> buscarTarifas(@Param("inicio") LocalDateTime inicio, @Param("fin") LocalDateTime fin);
 }
