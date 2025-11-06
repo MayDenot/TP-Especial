@@ -11,7 +11,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/scooters")
@@ -32,6 +34,38 @@ public class ElectricScooterController {
         } catch (Exception e) {
 
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+
+
+    @GetMapping("/latitud/{latitud}/longitud/{longitud}")
+    public ResponseEntity<?> obtenerScootersPorLatitudYLongitud(
+            @PathVariable Double latitud,
+            @PathVariable Double longitud) {
+        try {
+            List<ElectricScooterResponseDTO> scooters =
+                    electricScooterService.obtenerCercanos(latitud, longitud);
+
+            if (scooters.isEmpty()) {
+                // Retornar 200 OK con mensaje informativo (mejor UX)
+                return ResponseEntity.ok(Map.of(
+                        "mensaje", "No hay monopatines disponibles cerca de tu ubicación",
+                        "scooters", List.of(),
+                        "radio_km", 2.0
+                ));
+                // O si prefieres 204 No Content:
+                // return ResponseEntity.noContent().build();
+            }
+
+            return ResponseEntity.ok(scooters);
+
+        } catch (Exception e) {
+            System.err.println("❌ Error en obtenerScootersPorLatitudYLongitud: " + e.getMessage());
+            e.printStackTrace();
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", e.getMessage()));
         }
     }
 
