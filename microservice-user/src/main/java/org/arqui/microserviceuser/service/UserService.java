@@ -1,14 +1,17 @@
 package org.arqui.microserviceuser.service;
 
 import lombok.RequiredArgsConstructor;
+import org.arqui.microserviceelectric_scooter.service.DTO.Response.ElectricScooterResponseDTO;
 import org.arqui.microserviceuser.Rol;
 import org.arqui.microserviceuser.entity.User;
+import org.arqui.microserviceuser.feignClients.ElectricScooterClients;
 import org.arqui.microserviceuser.mapper.UserMapper;
 import org.arqui.microserviceuser.repository.UserRepository;
 import org.arqui.microserviceuser.service.DTO.request.UserRequestDTO;
 import org.arqui.microserviceuser.service.DTO.response.UserResponseDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,11 +21,12 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final ElectricScooterClients electricScooterClients;
 
     @Transactional
     public UserResponseDTO save(UserRequestDTO user) {
-        User usuario= UserMapper.toEntity(user);
-        User nuevoUsuario= userRepository.save(usuario);
+        User usuario = UserMapper.toEntity(user);
+        User nuevoUsuario = userRepository.save(usuario);
         return UserMapper.toResponse(nuevoUsuario);
     }
 
@@ -75,6 +79,19 @@ public class UserService {
                 .stream()
                 .map(UserMapper::toResponse)
                 .collect(Collectors.toList());
+    }
+
+    //g-Como usuario quiero encontrar los monopatines cercanos a mi zona
+    @Transactional(readOnly = true)
+    public List<ElectricScooterResponseDTO> obtenerMonopatinesCercanos(Double latitud, Double longitud) {
+
+        List<ElectricScooterResponseDTO> monopatines = electricScooterClients.obtenerMonopatinesCercanos(latitud, longitud);
+
+        if (monopatines == null || monopatines.isEmpty()) {
+            throw new RuntimeException("No se encontraron monopatines cercanos en la zona especificada.");
+        }
+
+        return monopatines;
     }
 
 }
