@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -79,6 +81,16 @@ public class TravelController {
              return ResponseEntity.ok(monopatines);
         }
         catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/fechaInicio/{inicio}/fechaFin/{fin}")
+    public ResponseEntity<?> buscarUsuariosConMasViajes(@PathVariable LocalDate inicio, @PathVariable LocalDate fin) throws Exception {
+        try {
+            List <Long> usuarios = travelService.buscarUsuariosConMasViajes(inicio, fin);
+            return ResponseEntity.ok(usuarios);
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error: " + e.getMessage());
         }
     }

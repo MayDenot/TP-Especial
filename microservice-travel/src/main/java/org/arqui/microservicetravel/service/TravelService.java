@@ -9,6 +9,7 @@ import org.arqui.microservicetravel.service.DTO.Response.TravelResponseDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -58,5 +59,10 @@ public class TravelService {
     @Transactional(readOnly = true)
     public List<String> buscarPorCantidadDeViajesYAño(Integer cantidadViajes, Integer anio) {
         return travelRepository.buscarPorCantidadDeViajesYAño(cantidadViajes, anio);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Long> buscarUsuariosConMasViajes(LocalDate inicio, LocalDate fin) {
+        return travelRepository.buscarUsuariosConMasViajes(inicio, fin);
     }
 }
