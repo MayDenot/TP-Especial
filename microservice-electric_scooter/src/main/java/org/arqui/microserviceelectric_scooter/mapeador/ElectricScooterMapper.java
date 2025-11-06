@@ -4,11 +4,13 @@ import org.arqui.microserviceelectric_scooter.service.DTO.Request.ElectricScoote
 import org.arqui.microserviceelectric_scooter.service.DTO.Response.ElectricScooterResponseDTO;
 import org.arqui.microserviceelectric_scooter.EstadoScooter;
 import org.arqui.microserviceelectric_scooter.entity.ElectricScooter;
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 
 public class ElectricScooterMapper {
 
     public static ElectricScooter toEntity(ElectricScooterRequestDTO dto) {
         ElectricScooter scooter = new ElectricScooter();
+
         scooter.setLongitud(dto.getLongitud());
         scooter.setLatitud(dto.getLatitud());
         scooter.setHabilitado(dto.getHabilitado());
@@ -19,8 +21,12 @@ public class ElectricScooterMapper {
         scooter.setCodigoQR(dto.getCodigoQR());
         scooter.setEstado(EstadoScooter.valueOf(dto.getEstado()));
         scooter.setIdParadaActual(dto.getIdParadaActual());
+
+         scooter.actualizarUbicacion();
+
         return scooter;
     }
+
 
     public static ElectricScooterResponseDTO toResponse(ElectricScooter scooter) {
         return new ElectricScooterResponseDTO(

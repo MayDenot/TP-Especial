@@ -20,7 +20,7 @@ import java.util.List;
 public class ElectricScooterService {
 
     private final TravelCliente travelClient;
-    private final  ElectricScooterRepository repository;
+    private final ElectricScooterRepository repository;
 
 
     public ElectricScooterService(TravelCliente travelClient, ElectricScooterRepository repository) {
@@ -36,7 +36,7 @@ public class ElectricScooterService {
     }
 
     @Transactional
-    public void modifier( String id,ElectricScooterRequestDTO electricScooterDTO) {
+    public void modifier(String id, ElectricScooterRequestDTO electricScooterDTO) {
         ElectricScooter existing = (ElectricScooter) this.repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Electric Scooter no encontrado con : " + id));
 
@@ -60,6 +60,7 @@ public class ElectricScooterService {
         // 4. Guardar
         ElectricScooter updated = this.repository.save(existing);
     }
+
     @Transactional
     public void deleteById(String id) {
         if (!this.repository.existsById(id)) {
@@ -71,7 +72,7 @@ public class ElectricScooterService {
 
     @Transactional
     public ElectricScooterResponseDTO getById(String id) {
-        ElectricScooter scooter =  this.repository.findById(id)
+        ElectricScooter scooter = this.repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Electric Scooter no encontrado con : " + id));
 
         return ElectricScooterMapper.toResponse(scooter);
@@ -92,13 +93,18 @@ public class ElectricScooterService {
     }
 
 
-
     public List<ElectricScooterResponseDTO> obtenerCercanos(Double latitud, Double longitud) {
-        List<ElectricScooterResponseDTO> resultado = repository.buscarPorZona(latitud, longitud);
-        if (resultado.isEmpty()) {
-            throw new RuntimeException("No hay monopatines cerca de esta ubicación");
-        }
-        return resultado;
+        double radioMetros = 2000; // 2 km de radio
+        List<ElectricScooter> resultado = repository.buscarPorZona(latitud, longitud, radioMetros);
+
+        // ❌ NO lances excepción si está vacío, simplemente retorna lista vacía
+        // El controller maneja la respuesta apropiada
+
+        return resultado.stream()
+                .map(ElectricScooterMapper::toResponse)
+                .toList();
     }
 
 
+
+}

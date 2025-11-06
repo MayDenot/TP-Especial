@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/scooters")
@@ -39,25 +40,34 @@ public class ElectricScooterController {
 
 
     @GetMapping("/latitud/{latitud}/longitud/{longitud}")
-    public ResponseEntity<List<ElectricScooterResponseDTO>> obtenerScootersPorLatitudYLongitud(
+    public ResponseEntity<?> obtenerScootersPorLatitudYLongitud(
             @PathVariable Double latitud,
             @PathVariable Double longitud) {
         try {
-            List<ElectricScooterResponseDTO> scooters = electricScooterService.obtenerCercanos(latitud, longitud);
+            List<ElectricScooterResponseDTO> scooters =
+                    electricScooterService.obtenerCercanos(latitud, longitud);
 
             if (scooters.isEmpty()) {
-                return ResponseEntity.noContent().build(); // 204 No Content
-                // o ResponseEntity.status(HttpStatus.NOT_FOUND).build(); // 404 Not Found
+                // Retornar 200 OK con mensaje informativo (mejor UX)
+                return ResponseEntity.ok(Map.of(
+                        "mensaje", "No hay monopatines disponibles cerca de tu ubicación",
+                        "scooters", List.of(),
+                        "radio_km", 2.0
+                ));
+                // O si prefieres 204 No Content:
+                // return ResponseEntity.noContent().build();
             }
 
             return ResponseEntity.ok(scooters);
 
         } catch (Exception e) {
+            System.err.println("❌ Error en obtenerScootersPorLatitudYLongitud: " + e.getMessage());
+            e.printStackTrace();
+
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(null);
+                    .body(Map.of("error", e.getMessage()));
         }
     }
-
 
 
 
