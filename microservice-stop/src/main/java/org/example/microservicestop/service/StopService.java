@@ -14,17 +14,26 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class StopService {
-    private StopRepository stopRepository;
+    private final StopRepository stopRepository;
 
     @Transactional
     public void save(StopRequestDTO stop){
         stopRepository.save(StopMapper.toEntity(stop));
     }
+
     @Transactional
     public StopResponseDTO delete(Long id){
-        return StopMapper.toResponse(stopRepository.findById(id).
-                orElseThrow(() -> new RuntimeException("No existe")));
+
+        Stop stop = stopRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("No existe"));
+
+        StopResponseDTO response = StopMapper.toResponse(stop);
+
+        stopRepository.deleteById(id);
+
+        return response;
     }
+
     @Transactional
     public StopResponseDTO update(Long id, StopRequestDTO stop){
         Stop stopEntity = stopRepository.findById(id).orElseThrow(() -> new RuntimeException("No existe"));

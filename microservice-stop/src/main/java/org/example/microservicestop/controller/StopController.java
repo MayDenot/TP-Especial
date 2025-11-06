@@ -13,23 +13,35 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/stops")
 @RequiredArgsConstructor
 public class StopController {
-    private StopService stopService;
+    private final StopService stopService;
 
     @PostMapping
     public ResponseEntity<?> save(@RequestBody StopRequestDTO stop) {
-        stopService.save(stop);
-        return ResponseEntity.status(HttpStatus.CREATED).body("Parada creada con exito");
+        try {
+            stopService.save(stop);
+            return ResponseEntity.status(HttpStatus.CREATED).body("Parada creada con exito");
+        }catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@RequestBody Long id ) {
-        stopService.delete(id);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Parada eliminada con exito");
+    public ResponseEntity<?> delete(@PathVariable Long id ) {
+        try {
+            stopService.delete(id);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Parada eliminada con exito");
+        }catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
     }
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody StopRequestDTO stop) {
-        StopResponseDTO updated = stopService.update(id, stop);
-        return ResponseEntity.ok(updated);
+        try {
+            StopResponseDTO updated = stopService.update(id, stop);
+            return ResponseEntity.ok(updated);
+        }catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
     }
 
 }
