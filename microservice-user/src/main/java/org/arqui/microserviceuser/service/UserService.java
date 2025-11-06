@@ -1,18 +1,21 @@
 package org.arqui.microserviceuser.service;
 
 import lombok.RequiredArgsConstructor;
-import org.arqui.microserviceelectric_scooter.service.DTO.Response.ElectricScooterResponseDTO;
+
 import org.arqui.microserviceuser.Rol;
 import org.arqui.microserviceuser.entity.User;
 import org.arqui.microserviceuser.feignClients.ElectricScooterClients;
+import org.arqui.microserviceuser.feignClients.TravelClients;
 import org.arqui.microserviceuser.mapper.UserMapper;
 import org.arqui.microserviceuser.repository.UserRepository;
 import org.arqui.microserviceuser.service.DTO.request.UserRequestDTO;
+import org.arqui.microserviceuser.service.DTO.response.ElectricScooterResponseDTO;
 import org.arqui.microserviceuser.service.DTO.response.UserResponseDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,6 +25,7 @@ import java.util.stream.Collectors;
 public class UserService {
     private final UserRepository userRepository;
     private final ElectricScooterClients electricScooterClients;
+    private final TravelClients travelClients;
 
     @Transactional
     public UserResponseDTO save(UserRequestDTO user) {
@@ -83,8 +87,25 @@ public class UserService {
 
     //e-Como administrador quiero ver los usuarios que más utilizan los monopatines, filtrado por
     //período y por tipo de usuario.
-//    @Transactional(readOnly = true)
-//    public List<UserResponseDTO> obtenerUsuariosMasViajesPorPeriodoYTipoCuenta(
+    @Transactional(readOnly = true)
+    public List<UserResponseDTO> obtenerUsuariosMasViajesPorPeriodoYTipoCuenta(LocalDate fechaInicio, LocalDate fechaFin, String tipoCuenta) {
+        List<Long> idsUsuarios = travelClients.obtenerIdUsuariosConMasViajes(fechaInicio, fechaFin);
+
+        if (idsUsuarios == null || idsUsuarios.isEmpty()) {
+            throw new RuntimeException("No se encontraron usuarios con viajes en el período indicado.");
+        }
+
+
+        List<User> usuarios = userRepository.findByIdsAndTipoCuenta(idsUsuarios, tipoCuenta);
+
+        if (usuarios.isEmpty()) {
+            throw new RuntimeException("No se encontraron usuarios con cuenta de tipo " + tipoCuenta);
+        }
+
+        return usuarios.stream()
+                .map(UserMapper::toResponse)
+                .toList();
+    }
 
     //g-Como usuario quiero encontrar los monopatines cercanos a mi zona
     @Transactional(readOnly = true)

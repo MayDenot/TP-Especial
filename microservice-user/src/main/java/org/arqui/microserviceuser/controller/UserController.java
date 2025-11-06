@@ -2,8 +2,7 @@ package org.arqui.microserviceuser.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.arqui.microserviceelectric_scooter.service.DTO.Response.ElectricScooterResponseDTO;
-import org.arqui.microserviceelectric_scooter.service.DTO.Response.ReporteUsoScooterDTO;
+import org.arqui.microserviceuser.service.DTO.response.ElectricScooterResponseDTO;
 import org.arqui.microserviceuser.Rol;
 import org.arqui.microserviceuser.service.DTO.request.UserRequestDTO;
 import org.arqui.microserviceuser.service.DTO.response.UserResponseDTO;
@@ -94,9 +93,5 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
-
-
-
-
 
 }

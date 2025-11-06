@@ -1,6 +1,6 @@
 package org.arqui.microserviceuser.feignClients;
 
-import org.arqui.microserviceelectric_scooter.service.DTO.Response.ElectricScooterResponseDTO;
+import org.arqui.microserviceuser.service.DTO.response.ElectricScooterResponseDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

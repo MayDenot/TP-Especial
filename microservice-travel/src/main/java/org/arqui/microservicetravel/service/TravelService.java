@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -64,5 +65,10 @@ public class TravelService {
     @Transactional(readOnly = true)
     public List<Long> buscarUsuariosConMasViajes(LocalDate inicio, LocalDate fin) {
         return travelRepository.buscarUsuariosConMasViajes(inicio, fin);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Long> buscarTarifas(LocalDateTime inicio, LocalDateTime fin) {
+        return travelRepository.buscarTarifas(inicio, fin);
     }
 }
