@@ -91,5 +91,14 @@ public class ElectricScooterService {
         return resultado;
     }
 
+
+
+    public List<ElectricScooterResponseDTO> obtenerCercanos(Double latitud, Double longitud) {
+        List<ElectricScooterResponseDTO> resultado = repository.buscarPorZona(latitud, longitud);
+        if (resultado.isEmpty()) {
+            throw new RuntimeException("No hay monopatines cerca de esta ubicación");
+        }
+        return resultado;
     }
+
 
