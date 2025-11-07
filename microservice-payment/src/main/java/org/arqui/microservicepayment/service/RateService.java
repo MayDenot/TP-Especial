@@ -17,7 +17,6 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -70,7 +69,6 @@ public class RateService {
 
   @Transactional(readOnly = true)
   public BillingResponseDTO calcularFacturacionPorPeriodo(Integer anio, Integer mesInicio, Integer mesFin) {
-    // 1. Obtener todos los viajes con costos calculados desde microservice-travel
     List<TravelWithCostRequestDTO> viajes = travelClient.getViajesConCostos(anio, mesInicio, mesFin);
 
     double totalFacturado = 0.0;
@@ -78,18 +76,14 @@ public class RateService {
     double totalTarifasExtra = 0.0;
     double totalDescuentosPremium = 0.0;
 
-    // Mapa para trackear los kilómetros por usuario por mes (para cuentas premium)
     Map<String, Integer> kmPorUsuarioPorMes = new HashMap<>();
 
-    // 2. Procesar cada viaje
     for (TravelWithCostRequestDTO viaje : viajes) {
       double costoFinal = viaje.getCostoTotal();
 
-      // Sumar tarifas base y extra
       totalTarifasBase += viaje.getCostoBase();
       totalTarifasExtra += viaje.getCostoExtra();
 
-      // 3. Aplicar descuento para cuentas premium (50% después de 100km)
       if ("PREMIUM".equalsIgnoreCase(viaje.getTipoCuenta())) {
         String keyUsuarioMes = viaje.getUsuario() + "-" +
                 viaje.getFecha_hora_inicio().getYear() + "-" +
@@ -98,13 +92,11 @@ public class RateService {
         int kmAcumulados = kmPorUsuarioPorMes.getOrDefault(keyUsuarioMes, 0);
         int kmViaje = viaje.getKmRecorridos() != null ? viaje.getKmRecorridos() : 0;
 
-        // Si ya superó los 100km, aplica 50% de descuento
         if (kmAcumulados >= 100) {
           double descuento = costoFinal * 0.5;
           costoFinal -= descuento;
           totalDescuentosPremium += descuento;
         } else if (kmAcumulados + kmViaje > 100) {
-          // Parte del viaje paga completo, parte con descuento
           int kmConDescuento = (kmAcumulados + kmViaje) - 100;
           double proporcionDescuento = (double) kmConDescuento / kmViaje;
           double descuento = costoFinal * proporcionDescuento * 0.5;
@@ -112,7 +104,6 @@ public class RateService {
           totalDescuentosPremium += descuento;
         }
 
-        // Actualizar kilómetros acumulados
         kmPorUsuarioPorMes.put(keyUsuarioMes, kmAcumulados + kmViaje);
       }
 

@@ -1,9 +1,11 @@
 package org.arqui.microservicetravel.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.arqui.microservicetravel.service.DTO.Request.FinalizarViajeRequestDTO;
 import org.arqui.microservicetravel.service.DTO.Request.TravelRequestDTO;
 import org.arqui.microservicetravel.service.DTO.Response.TravelResponseDTO;
 import org.arqui.microservicetravel.service.TravelService;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -107,6 +109,19 @@ public class TravelController {
         }
     }
 
+    @GetMapping("/usuario/{userId}")
+    public ResponseEntity<?> getViajesPorUsuario(
+            @PathVariable Long userId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaInicio,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaFin) {
+        try {
+            List<TravelResponseDTO> viajes = travelService.obtenerViajesPorUsuario(userId, fechaInicio, fechaFin);
+            return ResponseEntity.ok(viajes);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
     @GetMapping("/viajes-con-costos")
     public ResponseEntity<List<ViajeConCostoResponseDTO>> getViajesConCostos(
             @RequestParam Integer anio,
@@ -116,4 +131,21 @@ public class TravelController {
         List<ViajeConCostoResponseDTO> viajes = travelService.calcularCostosDeViajes(anio, mesInicio, mesFin);
         return ResponseEntity.ok(viajes);
     }
+
+    @PutMapping("/{id}/finalizar")
+    public ResponseEntity<?> finalizarViaje(
+            @PathVariable Long id,
+            @RequestBody FinalizarViajeRequestDTO request) {
+        try {
+            TravelResponseDTO travel = travelService.finalizarViaje(id, request);
+            return ResponseEntity.ok(travel);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Error al finalizar viaje: " + e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error interno: " + e.getMessage());
+        }
+    }
+
 }
