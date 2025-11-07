@@ -1,6 +1,7 @@
 package org.arqui.microservicetravel.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.arqui.microservicetravel.service.DTO.Request.FinalizarViajeRequestDTO;
 import org.arqui.microservicetravel.service.DTO.Request.TravelRequestDTO;
 import org.arqui.microservicetravel.service.DTO.Response.TravelResponseDTO;
 import org.arqui.microservicetravel.service.TravelService;
@@ -130,4 +131,21 @@ public class TravelController {
         List<ViajeConCostoResponseDTO> viajes = travelService.calcularCostosDeViajes(anio, mesInicio, mesFin);
         return ResponseEntity.ok(viajes);
     }
+
+    @PutMapping("/{id}/finalizar")
+    public ResponseEntity<?> finalizarViaje(
+            @PathVariable Long id,
+            @RequestBody FinalizarViajeRequestDTO request) {
+        try {
+            TravelResponseDTO travel = travelService.finalizarViaje(id, request);
+            return ResponseEntity.ok(travel);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Error al finalizar viaje: " + e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error interno: " + e.getMessage());
+        }
+    }
+
 }
