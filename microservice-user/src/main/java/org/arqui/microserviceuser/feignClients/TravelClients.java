@@ -4,6 +4,7 @@ import org.arqui.microserviceuser.service.DTO.response.TravelResponseDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -19,7 +20,6 @@ public interface TravelClients {
     @GetMapping("/api/travels/usuario/{userId}")
     List<TravelResponseDTO> obtenerViajesPorUsuario(
             @PathVariable("userId") Long userId,
-            @PathVariable LocalDate fechaInicio,
-            @PathVariable LocalDate fechaFin);
-
+            @RequestParam LocalDate fechaInicio,
+            @RequestParam LocalDate fechaFin);
 }
