@@ -83,6 +83,13 @@ public class TravelService {
     }
 
     @Transactional(readOnly = true)
+    public List<TravelResponseDTO> obtenerViajesPorUsuario(Long userId, LocalDate fechaInicio, LocalDate fechaFin) {
+        List<Travel> viajes = travelRepository.findByUsuarioAndFechaBetween(userId, fechaInicio, fechaFin);
+
+        return viajes.stream().map(TravelMapper::toResponse).collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
     public List<ViajeConCostoResponseDTO> calcularCostosDeViajes(Integer anio, Integer mesInicio, Integer mesFin) {
         List<Travel> viajes = travelRepository.buscarViajesParaFacturacion(anio, mesInicio, mesFin);
         

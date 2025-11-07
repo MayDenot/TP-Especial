@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.arqui.microservicetravel.service.DTO.Request.TravelRequestDTO;
 import org.arqui.microservicetravel.service.DTO.Response.TravelResponseDTO;
 import org.arqui.microservicetravel.service.TravelService;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -104,6 +105,19 @@ public class TravelController {
         }
         catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/usuario/{userId}")
+    public ResponseEntity<?> getViajesPorUsuario(
+            @PathVariable Long userId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaInicio,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaFin) {
+        try {
+            List<TravelResponseDTO> viajes = travelService.obtenerViajesPorUsuario(userId, fechaInicio, fechaFin);
+            return ResponseEntity.ok(viajes);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
