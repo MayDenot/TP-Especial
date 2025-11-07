@@ -4,8 +4,11 @@ import lombok.RequiredArgsConstructor;
 import org.arqui.microservicetravel.Mapper.TravelMapper;
 import org.arqui.microservicetravel.entity.Travel;
 import org.arqui.microservicetravel.feignClient.AccountClient;
+import org.arqui.microservicetravel.feignClient.ElectricScooterClient;
 import org.arqui.microservicetravel.feignClient.RateClient;
 import org.arqui.microservicetravel.repository.TravelRepository;
+import org.arqui.microservicetravel.service.DTO.Request.ActualizarEstadoParadaRequestDTO;
+import org.arqui.microservicetravel.service.DTO.Request.FinalizarViajeRequestDTO;
 import org.arqui.microservicetravel.service.DTO.Request.TravelRequestDTO;
 import org.arqui.microservicetravel.service.DTO.Response.AccountInfoResponseDTO;
 import org.arqui.microservicetravel.service.DTO.Response.RateInfoResponseDTO;
@@ -19,6 +22,7 @@ import org.arqui.microservicetravel.entity.Pause;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,6 +32,7 @@ public class TravelService {
     private final TravelRepository travelRepository;
     private final RateClient rateFeignClient;
     private final AccountClient accountFeignClient;
+    private final ElectricScooterClient electricScooterClient;
 
     @Transactional
     public void save(TravelRequestDTO travel){
@@ -88,6 +93,55 @@ public class TravelService {
 
         return viajes.stream().map(TravelMapper::toResponse).collect(Collectors.toList());
     }
+
+    @Transactional
+    public TravelResponseDTO finalizarViaje(Long travelId, FinalizarViajeRequestDTO request) {
+        // Buscar el viaje
+        Travel travel = travelRepository.findById(travelId)
+                .orElseThrow(() -> new RuntimeException("Viaje no encontrado con id: " + travelId));
+
+        // Validar que el viaje esté en curso
+        if (travel.getFecha_hora_fin() != null) {
+            throw new RuntimeException("El viaje ya fue finalizado");
+        }
+
+        // Actualizar datos del viaje
+        travel.setParada_fin(request.getParadaFinId());
+        travel.setFecha_hora_fin(LocalDateTime.now());
+
+        // Calcular duración en minutos
+        long minutos = ChronoUnit.MINUTES.between(travel.getFecha_hora_inicio(), travel.getFecha_hora_fin());
+
+        // Guardar viaje
+        Travel travelFinalizado = travelRepository.save(travel);
+
+        // ⭐ ACTUALIZAR ESTADO DEL MONOPATÍN VIA FEIGN
+        try {
+            ActualizarEstadoParadaRequestDTO scooterRequest = new ActualizarEstadoParadaRequestDTO(
+                    "DISPONIBLE",
+                    request.getParadaFinId(),
+                    request.getLatitud(),
+                    request.getLongitud()
+            );
+
+            electricScooterClient.actualizarEstadoEnParada(
+                    travel.getMonopatin(),
+                    scooterRequest
+            );
+
+            System.out.println("✅ Monopatín " + travel.getMonopatin() +
+                    " actualizado a DISPONIBLE en parada " + request.getParadaFinId());
+
+        } catch (Exception e) {
+            System.err.println("⚠ Error al actualizar estado del monopatín: " + e.getMessage());
+            // Decidir si hacer rollback o continuar
+            // throw new RuntimeException("Error al actualizar monopatín", e);
+        }
+
+        return TravelMapper.toResponse(travelFinalizado);
+    }
+
+
 
     @Transactional(readOnly = true)
     public List<ViajeConCostoResponseDTO> calcularCostosDeViajes(Integer anio, Integer mesInicio, Integer mesFin) {
