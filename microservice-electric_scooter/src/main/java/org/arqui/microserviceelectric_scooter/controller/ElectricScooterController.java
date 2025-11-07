@@ -1,5 +1,6 @@
 package org.arqui.microserviceelectric_scooter.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.arqui.microserviceelectric_scooter.entity.ElectricScooter;
 import org.arqui.microserviceelectric_scooter.service.DTO.Request.ElectricScooterRequestDTO;
@@ -126,12 +127,24 @@ public class ElectricScooterController {
         }
     }
 
-
-
-
-
-
-
+    @PutMapping("/{id}/estado")
+    public ResponseEntity<?> actualizarEstadoEnParada(
+            @PathVariable String id,
+            @Valid @RequestBody ElectricScooterRequestDTO dto) {
+        try {
+            ElectricScooterResponseDTO scooter = electricScooterService.actualizarEstadoEnParada(
+                    id,
+                    dto.getEstado(),
+                    dto.getIdParadaActual(),
+                    dto.getLatitud(),
+                    dto.getLongitud()
+            );
+            return ResponseEntity.ok(scooter);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al actualizar estado: " + e.getMessage());
+        }
+    }
 
 
 

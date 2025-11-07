@@ -113,4 +113,42 @@ public class ElectricScooterService {
         return ElectricScooterMapper.toReporteBasico(resultado);
 
     }
+
+    public ElectricScooterResponseDTO actualizarEstadoEnParada(
+            String id,
+            String estado,
+            Long idParadaActual,
+            Double latitud,
+            Double longitud) {
+
+
+        // Validar que al menos un campo venga para actualizar
+        if (estado == null && idParadaActual == null && latitud == null && longitud == null) {
+            throw new IllegalArgumentException("Debe proporcionar al menos un campo para actualizar");
+        }
+
+        // Validar que si viene latitud, también venga longitud (y viceversa)
+        if ((latitud != null && longitud == null) || (latitud == null && longitud != null)) {
+            throw new IllegalArgumentException("Latitud y longitud deben enviarse juntas");
+        }
+
+        // Buscar el scooter existente
+        ElectricScooter scooter = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Scooter no encontrado con id: " + id));
+
+        // Actualizar solo los campos que no son nulos
+
+        scooter.setEstado(EstadoScooter.valueOf(estado));
+        scooter.setIdParadaActual(idParadaActual);
+        scooter.setLatitud(latitud);
+
+        scooter.setLongitud(longitud);
+
+
+        // Guardar los cambios
+        ElectricScooter scooterActualizado = repository.save(scooter);
+
+        // Convertir a DTO y retornar
+        return ElectricScooterMapper.toResponse(scooterActualizado);
+    }
 }
