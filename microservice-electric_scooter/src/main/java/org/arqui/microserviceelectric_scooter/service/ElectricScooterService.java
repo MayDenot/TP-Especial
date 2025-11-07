@@ -9,8 +9,10 @@ import org.arqui.microserviceelectric_scooter.repository.ElectricScooterReposito
 import org.arqui.microserviceelectric_scooter.service.DTO.Request.ElectricScooterRequestDTO;
 import org.arqui.microserviceelectric_scooter.service.DTO.Response.ElectricScooterResponseDTO;
 import org.arqui.microserviceelectric_scooter.service.DTO.Response.ReporteUsoScooterDTO;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -40,26 +42,64 @@ public class ElectricScooterService {
     @Transactional
     public void modifier(String id, ElectricScooterRequestDTO electricScooterDTO) {
         ElectricScooter existing = (ElectricScooter) this.repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Electric Scooter no encontrado con : " + id));
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Electric Scooter no encontrado con id: " + id));
 
-        // 2. Actualizar solo los campos que vienen en el DTO
-        existing.setLongitud(electricScooterDTO.getLongitud());
-        existing.setLatitud(electricScooterDTO.getLatitud());
-        existing.setHabilitado(electricScooterDTO.getHabilitado());
-        existing.setBateria(electricScooterDTO.getBateria());
-        existing.setTiempoDeUso(electricScooterDTO.getTiempoDeUso());
-        existing.setKilometrosRecorridos(electricScooterDTO.getKilometrosRecorridos());
-        existing.setEnParada(electricScooterDTO.getEnParada());
-        existing.setCodigoQR(electricScooterDTO.getCodigoQR());
-        existing.setEstado(EstadoScooter.valueOf(electricScooterDTO.getEstado()));
-        existing.setIdParadaActual(electricScooterDTO.getIdParadaActual());
+        // Actualizar solo los campos que no son nulos en el DTO
+        if (electricScooterDTO.getLongitud() != null) {
+            existing.setLongitud(electricScooterDTO.getLongitud());
+        }
 
-        // 3. Actualizar la fecha de última actualización
+        if (electricScooterDTO.getLatitud() != null) {
+            existing.setLatitud(electricScooterDTO.getLatitud());
+        }
+
+        if (electricScooterDTO.getHabilitado() != null) {
+            existing.setHabilitado(electricScooterDTO.getHabilitado());
+        }
+
+        if (electricScooterDTO.getBateria() != null) {
+            existing.setBateria(electricScooterDTO.getBateria());
+        }
+
+        if (electricScooterDTO.getTiempoDeUso() != null) {
+            existing.setTiempoDeUso(electricScooterDTO.getTiempoDeUso());
+        }
+
+        if (electricScooterDTO.getKilometrosRecorridos() != null) {
+            existing.setKilometrosRecorridos(electricScooterDTO.getKilometrosRecorridos());
+        }
+
+        if (electricScooterDTO.getEnParada() != null) {
+            existing.setEnParada(electricScooterDTO.getEnParada());
+        }
+
+        if (electricScooterDTO.getCodigoQR() != null && !electricScooterDTO.getCodigoQR().isBlank()) {
+            existing.setCodigoQR(electricScooterDTO.getCodigoQR());
+        }
+
+        if (electricScooterDTO.getEstado() != null && !electricScooterDTO.getEstado().isBlank()) {
+            try {
+                EstadoScooter estadoEnum = EstadoScooter.valueOf(electricScooterDTO.getEstado().toUpperCase());
+                existing.setEstado(estadoEnum);
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException(
+                        "Estado inválido: '" + electricScooterDTO.getEstado() + "'. Valores permitidos: " +
+                                Arrays.toString(EstadoScooter.values())
+                );
+            }
+        }
+
+        if (electricScooterDTO.getIdParadaActual() != null) {
+            existing.setIdParadaActual(electricScooterDTO.getIdParadaActual());
+        }
+
+        // Actualizar la fecha de última actualización siempre
         existing.setUltimaActualizacion(LocalDateTime.now());
 
         // NOTA: NO actualizamos 'id' ni 'fechaAlta' porque no deben cambiar
 
-        // 4. Guardar
+        // Guardar
         ElectricScooter updated = this.repository.save(existing);
     }
 
@@ -72,10 +112,11 @@ public class ElectricScooterService {
     }
 
 
-    @Transactional
+    @Transactional(readOnly = true)
     public ElectricScooterResponseDTO getById(String id) {
         ElectricScooter scooter = this.repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Electric Scooter no encontrado con : " + id));
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Electric Scooter no encontrado con id: " + id));
 
         return ElectricScooterMapper.toResponse(scooter);
     }
@@ -141,7 +182,8 @@ public class ElectricScooterService {
 
         // Buscar el scooter existente
         ElectricScooter scooter = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Scooter no encontrado con id: " + id));
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Electric Scooter no encontrado con id: " + id));
 
         // Actualizar solo los campos que no son nulos
         if (estado != null && !estado.isBlank()) {
