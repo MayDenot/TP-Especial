@@ -71,7 +71,8 @@ public class AccountController {
         }
     }
 
-    //Como administrador quiero Anular/Desactivar cuenta
+    //b-Como administrador quiero poder anular cuentas de usuarios, para inhabilitar el uso
+    // momentáneo de la aplicación.
     @PutMapping("/{id}/anular")
     public ResponseEntity<AccountResponseDTO> anular(@PathVariable Long id) {
         try {

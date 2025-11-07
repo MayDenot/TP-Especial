@@ -14,6 +14,7 @@ import java.util.List;
 public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findByRol(Rol rol);
 
+    //3.e
     @Query("""
     SELECT DISTINCT u FROM User u
     JOIN u.cuentas c
@@ -23,4 +24,15 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findByIdsAndTipoCuenta(
             @Param("idsUsuarios") List<Long> idsUsuarios,
             @Param("tipoCuenta") String tipoCuenta);
+
+    //3.h
+    @Query("""
+    SELECT DISTINCT u FROM User u
+    JOIN u.cuentas c
+    WHERE c.id_account IN :idsCuentas
+    AND u.id_user != :userIdExcluir
+    """)
+    List<User> findOtrosUsuariosDeMismasCuentas(
+            @Param("idsCuentas") List<Long> idsCuentas,
+            @Param("userIdExcluir") Long userIdExcluir);
 }

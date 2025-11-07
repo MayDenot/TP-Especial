@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/users")
@@ -84,6 +85,7 @@ public class UserController {
         }
     }
 
+
     //e-Como administrador quiero ver los usuarios que más utilizan los monopatines, filtrado por
     //período y por tipo de usuario.
     @GetMapping("/fechaInicio/{inicio}/fechaFin/{fin}")
@@ -113,4 +115,22 @@ public class UserController {
         }
     }
 
+
+    //h-Como usuario quiero saber cuánto he usado los monopatines en un período, y opcionalmente si
+    //otros usuarios relacionados a mi cuenta los han usado.
+    @GetMapping("/{id}/usos")
+    public ResponseEntity<Map<String, Object>> obtenerUsoMonopatines(
+            @PathVariable Long id,
+            @RequestParam LocalDate inicio,
+            @RequestParam LocalDate fin,
+            @RequestParam(defaultValue = "false") boolean incluirRelacionados) {
+        try {
+            Map<String, Object> resultado = userService.obtenerUsoDeMonopatines(id, inicio, fin, incluirRelacionados);
+            return ResponseEntity.ok(resultado);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", e.getMessage()));
+        }
+    }
 }

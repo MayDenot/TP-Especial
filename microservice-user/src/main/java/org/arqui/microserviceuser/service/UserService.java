@@ -3,18 +3,21 @@ package org.arqui.microserviceuser.service;
 import lombok.RequiredArgsConstructor;
 
 import org.arqui.microserviceuser.Rol;
+import org.arqui.microserviceuser.entity.Account;
 import org.arqui.microserviceuser.entity.User;
 import org.arqui.microserviceuser.feignClients.ElectricScooterClients;
 import org.arqui.microserviceuser.feignClients.TravelClients;
 import org.arqui.microserviceuser.mapper.UserMapper;
 import org.arqui.microserviceuser.repository.UserRepository;
 import org.arqui.microserviceuser.service.DTO.request.UserRequestDTO;
-import org.arqui.microserviceuser.service.DTO.response.ElectricScooterResponseDTO;
-import org.arqui.microserviceuser.service.DTO.response.UserResponseDTO;
+import org.arqui.microserviceuser.service.DTO.response.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 
@@ -74,7 +77,7 @@ public class UserService {
                 .toList();
     }
 
-    // Metodo para buscar por rol
+
     @Transactional(readOnly = true)
     public List<UserResponseDTO> findByRol(Rol rol) {
         return userRepository.findByRol(rol)
@@ -82,6 +85,7 @@ public class UserService {
                 .map(UserMapper::toResponse)
                 .collect(Collectors.toList());
     }
+
 
     //e-Como administrador quiero ver los usuarios que más utilizan los monopatines, filtrado por
     //período y por tipo de usuario.
@@ -116,6 +120,41 @@ public class UserService {
         }
 
         return monopatines;
+    }
+
+    //h-Como usuario quiero saber cuánto he usado los monopatines en un período, y opcionalmente si
+    //otros usuarios relacionados a mi cuenta los han usado.
+    @Transactional(readOnly = true)
+    public Map<String, Object> obtenerUsoDeMonopatines(Long userId, LocalDate fechaInicio, LocalDate fechaFin, boolean incluirRelacionados) {
+
+        List<TravelResponseDTO> viajesUsuario = travelClients.obtenerViajesPorUsuario(userId, fechaInicio, fechaFin);
+
+        Map<String, Object> resultado = new HashMap<>();
+        resultado.put("usuarioPrincipal", userRepository.findById(userId)
+                .map(UserMapper::toResponse)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con id: " + userId)));
+        resultado.put("viajesUsuario", viajesUsuario);
+
+        // Usuarios relacionados
+        if (incluirRelacionados) {
+            List<Long> idsCuentas = userRepository.findById(userId)
+                    .map(u -> u.getCuentas().stream().map(Account::getId_account).toList())
+                    .orElse(List.of());
+
+            List<User> relacionados = userRepository.findOtrosUsuariosDeMismasCuentas(idsCuentas, userId);
+
+            List<Map<String, Object>> viajesRelacionados = new ArrayList<>();
+            for (User rel : relacionados) {
+                List<TravelResponseDTO> viajesRel = travelClients.obtenerViajesPorUsuario(rel.getId_user(), fechaInicio, fechaFin);
+                viajesRelacionados.add(Map.of(
+                        "usuario", UserMapper.toResponse(rel),
+                        "viajes", viajesRel
+                ));
+            }
+            resultado.put("usuariosRelacionados", viajesRelacionados);
+        }
+
+        return resultado;
     }
 
 }
