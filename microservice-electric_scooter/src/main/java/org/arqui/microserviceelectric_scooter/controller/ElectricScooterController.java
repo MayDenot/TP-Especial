@@ -140,11 +140,21 @@ public class ElectricScooterController {
                     dto.getLongitud()
             );
             return ResponseEntity.ok(scooter);
+        } catch (IllegalArgumentException e) {
+            // 400 Bad Request - Errores de validación
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Error de validación: " + e.getMessage());
+        } catch (RuntimeException e) {
+            // 404 Not Found - Scooter no encontrado
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Error: " + e.getMessage());
         } catch (Exception e) {
+            // 500 Internal Server Error - Otros errores
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error al actualizar estado: " + e.getMessage());
         }
     }
+
 
 
 

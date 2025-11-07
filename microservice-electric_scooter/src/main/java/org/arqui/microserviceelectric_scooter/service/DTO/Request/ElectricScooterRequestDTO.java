@@ -4,6 +4,7 @@ package org.arqui.microserviceelectric_scooter.service.DTO.Request;
 
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -25,7 +26,7 @@ public class ElectricScooterRequestDTO {
     private Double kilometrosRecorridos;
     private Boolean enParada;
     private String codigoQR; // opcional, puede generarse en el backend
-    private String estado;   // lo recibís como string (por ejemplo "DISPONIBLE")
-    private Long idParadaActual;
+    @NotBlank(message = "El estado es obligatorio")
+    private String estado;    private Long idParadaActual;
 }
 

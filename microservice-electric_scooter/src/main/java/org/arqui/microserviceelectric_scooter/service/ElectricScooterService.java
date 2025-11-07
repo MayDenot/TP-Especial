@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -79,7 +80,7 @@ public class ElectricScooterService {
         return ElectricScooterMapper.toResponse(scooter);
     }
 
-
+    @Transactional(readOnly = true)
     public List<ElectricScooterResponseDTO> obtenerMonopatinesByAnioYCantidad(Integer cantidad, Integer anio) {
         List<String> ids = travelClient.obtenerIdsMonopatines(cantidad, anio);
         List<ElectricScooterResponseDTO> resultado = new ArrayList<>();
@@ -93,7 +94,7 @@ public class ElectricScooterService {
         return resultado;
     }
 
-
+    @Transactional(readOnly = true)
     public List<ElectricScooterResponseDTO> obtenerCercanos(Double latitud, Double longitud) {
         double radioMetros = 2000; // 2 km de radio
         List<ElectricScooter> resultado = repository.buscarPorZona(latitud, longitud, radioMetros);
@@ -114,6 +115,8 @@ public class ElectricScooterService {
 
     }
 
+
+    @Transactional
     public ElectricScooterResponseDTO actualizarEstadoEnParada(
             String id,
             String estado,
@@ -121,6 +124,10 @@ public class ElectricScooterService {
             Double latitud,
             Double longitud) {
 
+        // Validar que el estado no esté vacío si viene
+        if (estado != null && estado.isBlank()) {
+            throw new IllegalArgumentException("El estado no puede estar vacío");
+        }
 
         // Validar que al menos un campo venga para actualizar
         if (estado == null && idParadaActual == null && latitud == null && longitud == null) {
@@ -137,13 +144,26 @@ public class ElectricScooterService {
                 .orElseThrow(() -> new RuntimeException("Scooter no encontrado con id: " + id));
 
         // Actualizar solo los campos que no son nulos
+        if (estado != null && !estado.isBlank()) {
+            try {
+                EstadoScooter estadoEnum = EstadoScooter.valueOf(estado.toUpperCase());
+                scooter.setEstado(estadoEnum);
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException(
+                        "Estado inválido: '" + estado + "'. Valores permitidos: " +
+                                Arrays.toString(EstadoScooter.values())
+                );
+            }
+        }
 
-        scooter.setEstado(EstadoScooter.valueOf(estado));
-        scooter.setIdParadaActual(idParadaActual);
-        scooter.setLatitud(latitud);
+        if (idParadaActual != null) {
+            scooter.setIdParadaActual(idParadaActual);
+        }
 
-        scooter.setLongitud(longitud);
-
+        if (latitud != null && longitud != null) {
+            scooter.setLatitud(latitud);
+            scooter.setLongitud(longitud);
+        }
 
         // Guardar los cambios
         ElectricScooter scooterActualizado = repository.save(scooter);
