@@ -113,9 +113,10 @@ public class ElectricScooterController {
 
 
     @GetMapping("/reporte")
-    public ResponseEntity<List<ReporteUsoScooterDTO>> obtenerMonopatines() {
+    public ResponseEntity<List<ReporteUsoScooterDTO>> obtenerMonopatines(
+            @RequestParam(defaultValue = "false") boolean incluirPausas) {
         try {
-            List<ReporteUsoScooterDTO> reporte = electricScooterService.generarReporteUso();
+            List<ReporteUsoScooterDTO> reporte = electricScooterService.generarReporteUso(incluirPausas);
 
             if (reporte.isEmpty()) {
                 return ResponseEntity.noContent().build();
@@ -126,6 +127,8 @@ public class ElectricScooterController {
             return ResponseEntity.internalServerError().build();
         }
     }
+
+
 
     @PutMapping("/{id}/estado")
     public ResponseEntity<?> actualizarEstadoEnParada(

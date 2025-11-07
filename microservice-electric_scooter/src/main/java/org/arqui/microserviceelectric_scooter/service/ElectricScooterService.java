@@ -150,11 +150,24 @@ public class ElectricScooterService {
 
 
     @Transactional(readOnly = true)
-    public List<ReporteUsoScooterDTO> generarReporteUso() {
-        List<ElectricScooter> resultado = repository.findAll();
-        return ElectricScooterMapper.toReporteBasico(resultado);
+    public List<ReporteUsoScooterDTO> generarReporteUso(boolean incluirPausas) {
+        List<ElectricScooter> scooters = repository.findAll();
 
+        return scooters.stream()
+                .map(scooter -> {
+                    ReporteUsoScooterDTO dto = ElectricScooterMapper.toReporte(scooter);
+
+                    if (!incluirPausas) {
+                        // Si NO se incluyen pausas, restamos ese tiempo del total
+                        long tiempoSinPausas = dto.getTiempoTotalUsoSegundos() - dto.getTiempoEnMovimientoSegundos();
+                        dto.setTiempoTotalUsoSegundos(Math.max(tiempoSinPausas, 0));
+                    }
+
+                    return dto;
+                })
+                .toList();
     }
+
 
 
     @Transactional
