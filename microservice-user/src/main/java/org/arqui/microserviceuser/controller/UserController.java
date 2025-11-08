@@ -88,8 +88,8 @@ public class UserController {
 
     //e-Como administrador quiero ver los usuarios que más utilizan los monopatines, filtrado por
     //período y por tipo de usuario.
-    @GetMapping("/fechaInicio/{inicio}/fechaFin/{fin}")
-    public ResponseEntity<List<UserResponseDTO>> obtenerUsuariosMasViajesPorPeriodoYTipoCuenta(
+    @GetMapping("/fechaInicio/{inicio}/fechaFin/{fin}/tipoCuenta/{tipoCuenta}")
+    public ResponseEntity<?> obtenerUsuariosMasViajesPorPeriodoYTipoCuenta(
             @PathVariable LocalDate inicio,
             @PathVariable LocalDate fin,
             @PathVariable String tipoCuenta) {
@@ -98,9 +98,9 @@ public class UserController {
                     userService.obtenerUsuariosMasViajesPorPeriodoYTipoCuenta(inicio, fin, tipoCuenta);
             return ResponseEntity.ok(usuarios);
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error interno: " + e.getMessage());
         }
     }
 

@@ -122,12 +122,12 @@ public class TravelController {
         }
     }
 
-    @GetMapping("/viajes-con-costos")
+    @GetMapping("/travelsWithCosts")
     public ResponseEntity<List<ViajeConCostoResponseDTO>> getViajesConCostos(
             @RequestParam Integer anio,
             @RequestParam Integer mesInicio,
             @RequestParam Integer mesFin) {
-        
+
         List<ViajeConCostoResponseDTO> viajes = travelService.calcularCostosDeViajes(anio, mesInicio, mesFin);
         return ResponseEntity.ok(viajes);
     }

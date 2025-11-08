@@ -6,7 +6,8 @@
       "Bash(where:*)",
       "Bash(.\\mvnw.cmd clean compile:*)",
       "Bash(cmd /c mvnw.cmd clean compile:*)",
-      "Bash(./mvnw clean:*)"
+      "Bash(./mvnw clean:*)",
+      "Bash(dir:*)"
     ],
     "deny": [],
     "ask": []
