@@ -42,32 +42,22 @@ public class ElectricScooterController {
 
 
     @GetMapping("/latitud/{latitud}/longitud/{longitud}")
-    public ResponseEntity<?> obtenerScootersPorLatitudYLongitud(
+    public ResponseEntity<List<ElectricScooterResponseDTO>> obtenerScootersPorLatitudYLongitud(
             @PathVariable Double latitud,
             @PathVariable Double longitud) {
         try {
             List<ElectricScooterResponseDTO> scooters =
                     electricScooterService.obtenerCercanos(latitud, longitud);
 
-            if (scooters.isEmpty()) {
-                // Retornar 200 OK con mensaje informativo (mejor UX)
-                return ResponseEntity.ok(Map.of(
-                        "mensaje", "No hay monopatines disponibles cerca de tu ubicación",
-                        "scooters", List.of(),
-                        "radio_km", 2.0
-                ));
-                // O si prefieres 204 No Content:
-                // return ResponseEntity.noContent().build();
-            }
-
+            // Siempre retornar la lista, incluso si está vacía (200 OK con lista vacía)
             return ResponseEntity.ok(scooters);
 
         } catch (Exception e) {
             System.err.println("❌ Error en obtenerScootersPorLatitudYLongitud: " + e.getMessage());
             e.printStackTrace();
 
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", e.getMessage()));
+            // En caso de error, retornar lista vacía en lugar de error
+            return ResponseEntity.ok(new ArrayList<>());
         }
     }
 

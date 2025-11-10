@@ -33,7 +33,7 @@ public class ElectricScooterMapper {
 
     public static ElectricScooterResponseDTO toResponse(ElectricScooter scooter) {
         return new ElectricScooterResponseDTO(
-                scooter.getId(),
+                scooter.get_id(),
                 scooter.getLongitud(),
                 scooter.getLatitud(),
                 scooter.getHabilitado(),
@@ -56,7 +56,7 @@ public class ElectricScooterMapper {
         long tiempoEnPausa = scooter.getEnParada() ? total : 0L;
 
         return new ReporteUsoScooterDTO(
-                scooter.getId(),
+                scooter.get_id(),
                 scooter.getKilometrosRecorridos(),
                 total,
                 tiempoEnMovimiento,

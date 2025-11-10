@@ -17,7 +17,7 @@ use scooters_db;
 db.electric_scooters.insertMany([
   // SCOOTER-001 - Actualmente en viaje (pausado)
   {
-    id: "SCOOTER-001",
+    _id: "SCOOTER-001",
     longitud: -59.1333,
     latitud: -37.3215,
     habilitado: true,
@@ -40,7 +40,7 @@ db.electric_scooters.insertMany([
 
   // SCOOTER-002 - Disponible en parada 2
   {
-    id: "SCOOTER-002",
+    _id: "SCOOTER-002",
     longitud: -59.1389,
     latitud: -37.3156,
     habilitado: true,
@@ -63,7 +63,7 @@ db.electric_scooters.insertMany([
 
   // SCOOTER-003 - Disponible en parada 3
   {
-    id: "SCOOTER-003",
+    _id: "SCOOTER-003",
     longitud: -59.1421,
     latitud: -37.3289,
     habilitado: true,
@@ -86,7 +86,7 @@ db.electric_scooters.insertMany([
 
   // SCOOTER-004 - Disponible en parada 4
   {
-    id: "SCOOTER-004",
+    _id: "SCOOTER-004",
     longitud: -59.1267,
     latitud: -37.3298,
     habilitado: true,
@@ -109,7 +109,7 @@ db.electric_scooters.insertMany([
 
   // SCOOTER-005 - Disponible en parada 5
   {
-    id: "SCOOTER-005",
+    _id: "SCOOTER-005",
     longitud: -59.1445,
     latitud: -37.3178,
     habilitado: true,
@@ -132,7 +132,7 @@ db.electric_scooters.insertMany([
 
   // SCOOTER-006 - Disponible en parada 6
   {
-    id: "SCOOTER-006",
+    _id: "SCOOTER-006",
     longitud: -59.1301,
     latitud: -37.3334,
     habilitado: true,
@@ -155,7 +155,7 @@ db.electric_scooters.insertMany([
 
   // SCOOTER-007 - Disponible en parada 7
   {
-    id: "SCOOTER-007",
+    _id: "SCOOTER-007",
     longitud: -59.1556,
     latitud: -37.3267,
     habilitado: true,
@@ -178,7 +178,7 @@ db.electric_scooters.insertMany([
 
   // SCOOTER-008 - Disponible en parada 8
   {
-    id: "SCOOTER-008",
+    _id: "SCOOTER-008",
     longitud: -59.1312,
     latitud: -37.3401,
     habilitado: true,
@@ -201,7 +201,7 @@ db.electric_scooters.insertMany([
 
   // SCOOTER-009 - Disponible en parada 9
   {
-    id: "SCOOTER-009",
+    _id: "SCOOTER-009",
     longitud: -59.1478,
     latitud: -37.3245,
     habilitado: true,
@@ -224,7 +224,7 @@ db.electric_scooters.insertMany([
 
   // SCOOTER-010 - Disponible en parada 10
   {
-    id: "SCOOTER-010",
+    _id: "SCOOTER-010",
     longitud: -59.1190,
     latitud: -37.3289,
     habilitado: true,
@@ -247,7 +247,7 @@ db.electric_scooters.insertMany([
 
   // SCOOTER-011 - En reparación (deshabilitado)
   {
-    id: "SCOOTER-011",
+    _id: "SCOOTER-011",
     longitud: -59.1333,
     latitud: -37.3215,
     habilitado: false,
@@ -270,7 +270,7 @@ db.electric_scooters.insertMany([
 
   // SCOOTER-012 - Disponible con batería baja
   {
-    id: "SCOOTER-012",
+    _id: "SCOOTER-012",
     longitud: -59.1389,
     latitud: -37.3156,
     habilitado: true,
@@ -293,7 +293,7 @@ db.electric_scooters.insertMany([
 
   // SCOOTER-013 - Nuevo, sin uso
   {
-    id: "SCOOTER-013",
+    _id: "SCOOTER-013",
     longitud: -59.1421,
     latitud: -37.3289,
     habilitado: true,
@@ -316,7 +316,7 @@ db.electric_scooters.insertMany([
 
   // SCOOTER-014 - Disponible, alto uso
   {
-    id: "SCOOTER-014",
+    _id: "SCOOTER-014",
     longitud: -59.1267,
     latitud: -37.3298,
     habilitado: true,
@@ -339,7 +339,7 @@ db.electric_scooters.insertMany([
 
   // SCOOTER-015 - En reparación
   {
-    id: "SCOOTER-015",
+    _id: "SCOOTER-015",
     longitud: -59.1445,
     latitud: -37.3178,
     habilitado: false,
@@ -398,7 +398,7 @@ print("========================================\n");
 // Mostrar algunos monopatines de ejemplo
 print("Ejemplos de monopatines insertados:");
 db.electric_scooters.find().limit(3).forEach(function(scooter) {
-  print("\n- ID: " + scooter.id);
+  print("\n- ID: " + scooter._id);
   print("  Estado: " + scooter.estado);
   print("  Batería: " + scooter.bateria + "%");
   print("  Km recorridos: " + scooter.kilometrosRecorridos);

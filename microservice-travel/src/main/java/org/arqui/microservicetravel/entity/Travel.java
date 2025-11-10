@@ -1,5 +1,6 @@
 package org.arqui.microservicetravel.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,10 +25,11 @@ public class Travel {
     private Integer kmRecorridos;
     @Column
     private Boolean pausado;
-    
+
     @OneToMany(mappedBy = "travel", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Pause> pausas;
-    
+
     @Column
     private Long tarifa;
     @Column

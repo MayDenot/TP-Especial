@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.index.GeoSpatialIndexType;
 import org.springframework.data.mongodb.core.index.GeoSpatialIndexed;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 import org.arqui.microserviceelectric_scooter.EstadoScooter;
 import org.springframework.data.mongodb.repository.Query;
 
@@ -23,7 +24,7 @@ import java.util.Map;
 public class ElectricScooter {
 
     @Id
-    private String id; // Mongo usa IDs tipo String (ObjectId)
+    private String _id; // Mongo usa IDs tipo String (ObjectId)
 
     private Double longitud;
     private Double latitud;
