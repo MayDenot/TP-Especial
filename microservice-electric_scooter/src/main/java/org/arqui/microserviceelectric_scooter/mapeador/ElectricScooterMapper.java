@@ -22,7 +22,7 @@ public class ElectricScooterMapper {
         scooter.setKilometrosRecorridos(dto.getKilometrosRecorridos());
         scooter.setEnParada(dto.getEnParada());
         scooter.setCodigoQR(dto.getCodigoQR());
-        scooter.setEstado(EstadoScooter.valueOf(dto.getEstado()));
+        scooter.setEstado(EstadoScooter.valueOf(String.valueOf(dto.getEstado())));
         scooter.setIdParadaActual(dto.getIdParadaActual());
 
          scooter.actualizarUbicacion();

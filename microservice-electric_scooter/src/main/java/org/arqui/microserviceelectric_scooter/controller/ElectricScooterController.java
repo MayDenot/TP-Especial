@@ -143,7 +143,7 @@ public class ElectricScooterController {
         try {
             ElectricScooterResponseDTO scooter = electricScooterService.actualizarEstadoEnParada(
                     id,
-                    dto.getEstado(),
+                    String.valueOf(dto.getEstado()),
                     dto.getIdParadaActual(),
                     dto.getLatitud(),
                     dto.getLongitud()

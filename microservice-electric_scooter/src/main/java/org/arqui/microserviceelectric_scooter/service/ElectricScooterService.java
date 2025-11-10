@@ -78,9 +78,9 @@ public class ElectricScooterService {
             existing.setCodigoQR(electricScooterDTO.getCodigoQR());
         }
 
-        if (electricScooterDTO.getEstado() != null && !electricScooterDTO.getEstado().isBlank()) {
+        if (electricScooterDTO.getEstado() != null) {
             try {
-                EstadoScooter estadoEnum = EstadoScooter.valueOf(electricScooterDTO.getEstado().toUpperCase());
+                EstadoScooter estadoEnum = EstadoScooter.valueOf(String.valueOf(electricScooterDTO.getEstado()));
                 existing.setEstado(estadoEnum);
             } catch (IllegalArgumentException e) {
                 throw new IllegalArgumentException(
