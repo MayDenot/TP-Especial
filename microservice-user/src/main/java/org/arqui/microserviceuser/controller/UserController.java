@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -109,9 +110,11 @@ public class UserController {
     public ResponseEntity<List<ElectricScooterResponseDTO>> obtenerMonopatinesCercanos(@PathVariable Double latitud, @PathVariable Double longitud) {
         try {
             List<ElectricScooterResponseDTO> monopatines = userService.obtenerMonopatinesCercanos(latitud, longitud);
+            // Siempre retornar 200 OK con la lista (vacía o no)
             return ResponseEntity.ok(monopatines);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        } catch (Exception e) {
+            // En caso de error, retornar lista vacía en lugar de error 400
+            return ResponseEntity.ok(Collections.emptyList());
         }
     }
 

@@ -14,10 +14,7 @@ import org.arqui.microserviceuser.service.DTO.response.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -91,7 +88,11 @@ public class UserService {
     //período y por tipo de usuario.
     @Transactional(readOnly = true)
     public List<UserResponseDTO> obtenerUsuariosMasViajesPorPeriodoYTipoCuenta(LocalDate fechaInicio, LocalDate fechaFin, String tipoCuenta) {
-        List<Long> idsUsuarios = travelClients.obtenerIdUsuariosConMasViajes(fechaInicio, fechaFin);
+        // Convertir LocalDate a String en formato ISO (yyyy-MM-dd)
+        String fechaInicioStr = fechaInicio.toString();
+        String fechaFinStr = fechaFin.toString();
+
+        List<Long> idsUsuarios = travelClients.obtenerIdUsuariosConMasViajes(fechaInicioStr, fechaFinStr);
 
         if (idsUsuarios == null || idsUsuarios.isEmpty()) {
             throw new RuntimeException("No se encontraron usuarios con viajes en el período indicado.");
@@ -114,11 +115,9 @@ public class UserService {
     public List<ElectricScooterResponseDTO> obtenerMonopatinesCercanos(Double latitud, Double longitud) {
 
         List<ElectricScooterResponseDTO> monopatines = electricScooterClients.obtenerMonopatinesCercanos(latitud, longitud);
-
-        if (monopatines == null || monopatines.isEmpty()) {
-            throw new RuntimeException("No se encontraron monopatines cercanos en la zona especificada.");
+        if(monopatines == null){
+            return Collections.emptyList();
         }
-
         return monopatines;
     }
 
@@ -126,8 +125,11 @@ public class UserService {
     //otros usuarios relacionados a mi cuenta los han usado.
     @Transactional(readOnly = true)
     public Map<String, Object> obtenerUsoDeMonopatines(Long userId, LocalDate fechaInicio, LocalDate fechaFin, boolean incluirRelacionados) {
+        // Convertir LocalDate a String en formato ISO (yyyy-MM-dd)
+        String fechaInicioStr = fechaInicio.toString();
+        String fechaFinStr = fechaFin.toString();
 
-        List<TravelResponseDTO> viajesUsuario = travelClients.obtenerViajesPorUsuario(userId, fechaInicio, fechaFin);
+        List<TravelResponseDTO> viajesUsuario = travelClients.obtenerViajesPorUsuario(userId, fechaInicioStr, fechaFinStr);
 
         Map<String, Object> resultado = new HashMap<>();
         resultado.put("usuarioPrincipal", userRepository.findById(userId)
@@ -145,7 +147,7 @@ public class UserService {
 
             List<Map<String, Object>> viajesRelacionados = new ArrayList<>();
             for (User rel : relacionados) {
-                List<TravelResponseDTO> viajesRel = travelClients.obtenerViajesPorUsuario(rel.getId_user(), fechaInicio, fechaFin);
+                List<TravelResponseDTO> viajesRel = travelClients.obtenerViajesPorUsuario(rel.getId_user(), fechaInicioStr, fechaFinStr);
                 viajesRelacionados.add(Map.of(
                         "usuario", UserMapper.toResponse(rel),
                         "viajes", viajesRel

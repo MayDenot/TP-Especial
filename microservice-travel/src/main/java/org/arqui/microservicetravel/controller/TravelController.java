@@ -112,13 +112,21 @@ public class TravelController {
     @GetMapping("/usuario/{userId}")
     public ResponseEntity<?> getViajesPorUsuario(
             @PathVariable Long userId,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaInicio,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaFin) {
+            @RequestParam String fechaInicio,
+            @RequestParam String fechaFin) {
         try {
-            List<TravelResponseDTO> viajes = travelService.obtenerViajesPorUsuario(userId, fechaInicio, fechaFin);
+            // Parsear las fechas manualmente
+            LocalDate inicio = LocalDate.parse(fechaInicio);
+            LocalDate fin = LocalDate.parse(fechaFin);
+
+            List<TravelResponseDTO> viajes = travelService.obtenerViajesPorUsuario(userId, inicio, fin);
             return ResponseEntity.ok(viajes);
+        } catch (java.time.format.DateTimeParseException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Formato de fecha inválido. Use formato yyyy-MM-dd. Error: " + e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error interno: " + e.getMessage());
         }
     }
 

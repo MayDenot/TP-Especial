@@ -29,6 +29,7 @@ public class User{
     @Column
     private Integer numeroCelular;
     @Column
+    @Enumerated(EnumType.STRING)
     private Rol rol;
     @Column
     private Float latitud;

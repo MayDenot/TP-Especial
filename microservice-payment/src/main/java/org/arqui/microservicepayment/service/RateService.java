@@ -2,6 +2,7 @@ package org.arqui.microservicepayment.service;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import net.bytebuddy.asm.Advice;
 import org.arqui.microservicepayment.entity.Rate;
 import org.arqui.microservicepayment.feignClient.TravelClient;
 import org.arqui.microservicepayment.mapper.RateMapper;
@@ -28,6 +29,7 @@ public class RateService {
   @Transactional
   public void save(RateRequestDTO rate) {
     Rate tarifaActualizada = RateMapper.toEntity(rate);
+    tarifaActualizada.setVigente(false);
     rateRepository.save(tarifaActualizada);
   }
 
@@ -43,15 +45,10 @@ public class RateService {
 
     tarifa.setTarifa(rate.getTarifa());
     tarifa.setTarifaExtra(rate.getTarifaExtra());
-    tarifa.setFecha(rate.getFecha());
+    tarifa.setFechaActualizacion(rate.getFechaActualizacion());
 
     rateRepository.save(tarifa);
     return RateMapper.toResponse(tarifa);
-  }
-
-  @Transactional
-  public void habilitarNuevosPreciosAPartirDe(LocalDateTime fecha) {
-    rateRepository.habilitarNuevosPreciosAPartirDe(fecha);
   }
 
   @Transactional(readOnly = true)

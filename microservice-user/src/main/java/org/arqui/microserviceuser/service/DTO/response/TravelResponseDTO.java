@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 @Data
@@ -15,6 +16,7 @@ public class TravelResponseDTO {
     private LocalDateTime fecha_hora_fin;
     private Integer kmRecorridos;
     private Boolean pausado;
+    private List<Pause> pausas;
     private Long tarifa;
     private Long parada_inicio;
     private Long parada_fin;

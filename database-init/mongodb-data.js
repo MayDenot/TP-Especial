@@ -398,7 +398,7 @@ print("========================================\n");
 // Mostrar algunos monopatines de ejemplo
 print("Ejemplos de monopatines insertados:");
 db.electric_scooters.find().limit(3).forEach(function(scooter) {
-  print("\n- ID: " + scooter.id);
+  print("\n- ID: " + scooter._id);
   print("  Estado: " + scooter.estado);
   print("  Batería: " + scooter.bateria + "%");
   print("  Km recorridos: " + scooter.kilometrosRecorridos);

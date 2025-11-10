@@ -14,12 +14,12 @@ public interface TravelClients {
     //3.e
     @GetMapping("/api/travels/fechaInicio/{inicio}/fechaFin/{fin}")
     public List<Long> obtenerIdUsuariosConMasViajes(
-            @PathVariable LocalDate fechaInicio,
-            @PathVariable LocalDate fechaFin);
+            @PathVariable("inicio") String fechaInicio,
+            @PathVariable("fin") String fechaFin);
     //3.h
     @GetMapping("/api/travels/usuario/{userId}")
     List<TravelResponseDTO> obtenerViajesPorUsuario(
             @PathVariable("userId") Long userId,
-            @RequestParam LocalDate fechaInicio,
-            @RequestParam LocalDate fechaFin);
+            @RequestParam("fechaInicio") String fechaInicio,
+            @RequestParam("fechaFin") String fechaFin);
 }
