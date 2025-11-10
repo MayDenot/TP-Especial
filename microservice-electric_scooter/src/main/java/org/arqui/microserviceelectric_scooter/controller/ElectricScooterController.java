@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -28,36 +29,50 @@ public class ElectricScooterController {
 
 
     @PostMapping
-    public ResponseEntity<?> save(@RequestBody ElectricScooterRequestDTO electricScooter) {
-
+    public ResponseEntity<?> save(@Valid @RequestBody ElectricScooterRequestDTO electricScooter) {
         try {
             this.electricScooterService.save(electricScooter);
             return ResponseEntity.status(HttpStatus.CREATED).body("scooter creado con exito");
+        } catch (IllegalArgumentException e) {
+            // Validaciones de negocio específicas
+            Map<String, String> error = new HashMap<>();
+            error.put("mensaje", "Mal formato de monopatin");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
         } catch (Exception e) {
-
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error interno del servidor");
         }
     }
 
 
 
     @GetMapping("/latitud/{latitud}/longitud/{longitud}")
-    public ResponseEntity<List<ElectricScooterResponseDTO>> obtenerScootersPorLatitudYLongitud(
-            @PathVariable Double latitud,
-            @PathVariable Double longitud) {
+    public ResponseEntity<?> obtenerScootersPorLatitudYLongitud(
+           @Valid @PathVariable Double latitud,
+             @Valid @PathVariable Double longitud) {
         try {
             List<ElectricScooterResponseDTO> scooters =
                     electricScooterService.obtenerCercanos(latitud, longitud);
 
-            // Siempre retornar la lista, incluso si está vacía (200 OK con lista vacía)
+            if (scooters.isEmpty()) {
+                // Retornar 200 OK con mensaje informativo (mejor UX)
+                return ResponseEntity.ok(Map.of(
+                        "mensaje", "No hay monopatines disponibles cerca de tu ubicación",
+                        "scooters", List.of(),
+                        "radio_km", 2.0
+                ));
+                // O si prefieres 204 No Content:
+                // return ResponseEntity.noContent().build();
+            }
+
             return ResponseEntity.ok(scooters);
 
         } catch (Exception e) {
             System.err.println("❌ Error en obtenerScootersPorLatitudYLongitud: " + e.getMessage());
             e.printStackTrace();
 
-            // En caso de error, retornar lista vacía en lugar de error
-            return ResponseEntity.ok(new ArrayList<>());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", e.getMessage()));
         }
     }
 
@@ -65,8 +80,8 @@ public class ElectricScooterController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> modifier(
-            @PathVariable String id,
-            @RequestBody ElectricScooterRequestDTO electricScooterDTO) {
+            @Valid  @PathVariable String id,
+            @Valid  @RequestBody ElectricScooterRequestDTO electricScooterDTO) {
         try {
 
             electricScooterService.modifier(id, electricScooterDTO);
@@ -79,7 +94,7 @@ public class ElectricScooterController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> eliminar(@PathVariable String id) {
+    public ResponseEntity<?> eliminar( @Valid @PathVariable String id) {
         try {
             this.electricScooterService.deleteById(id);
             return ResponseEntity.status(HttpStatus.OK).body("eliminado con exito");
@@ -122,7 +137,7 @@ public class ElectricScooterController {
 
     @PutMapping("/{id}/estado")
     public ResponseEntity<?> actualizarEstadoEnParada(
-            @PathVariable String id,
+           @Valid @PathVariable String id,
             @Valid @RequestBody ElectricScooterRequestDTO dto) {
         try {
             ElectricScooterResponseDTO scooter = electricScooterService.actualizarEstadoEnParada(

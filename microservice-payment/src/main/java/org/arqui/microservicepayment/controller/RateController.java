@@ -47,16 +47,6 @@ public class RateController {
     }
   }
 
-  @PutMapping("/enable/{fecha}")
-  public ResponseEntity<?> habilitarNuevosPreciosAPartirDe(@PathVariable LocalDateTime fecha) throws Exception {
-    try {
-      rateService.habilitarNuevosPreciosAPartirDe(fecha);
-      return ResponseEntity.status(200).body("Tarifa habilitada con exito");
-    } catch (Exception e) {
-      throw new Exception(e.getMessage());
-    }
-  }
-
   @GetMapping("/{id}")
   public ResponseEntity<RateResponseDTO> findById(@PathVariable Long id) throws Exception {
     try {
@@ -76,35 +66,25 @@ public class RateController {
   }
 
   @GetMapping("/current")
-    public ResponseEntity<RateResponseDTO> getRateByDate(@PathVariable LocalDateTime fecha) throws Exception {
-      try {
-        return ResponseEntity.ok(rateService.findRateByDate(fecha));
-      } catch (Exception e) {
-        throw new Exception(e.getMessage());
-      }
+  public ResponseEntity<RateResponseDTO> getRateByDate(@PathVariable LocalDateTime fecha) throws Exception {
+    try {
+      return ResponseEntity.ok(rateService.findRateByDate(fecha));
+    } catch (Exception e) {
+      throw new Exception(e.getMessage());
     }
+  }
 
-    @GetMapping("/billing")
-    public ResponseEntity<BillingResponseDTO> obtenerFacturacionPorPeriodo(
-            @RequestParam Integer anio,
-            @RequestParam Integer mesInicio,
-            @RequestParam Integer mesFin) throws Exception {
-      try {
-        BillingResponseDTO facturacion =
-                rateService.calcularFacturacionPorPeriodo(anio, mesInicio, mesFin);
-        return ResponseEntity.ok(facturacion);
-      } catch (Exception e) {
-        throw new Exception(e.getMessage());
-      }
+  @GetMapping("/billing")
+  public ResponseEntity<BillingResponseDTO> obtenerFacturacionPorPeriodo(
+          @RequestParam Integer anio,
+          @RequestParam Integer mesInicio,
+          @RequestParam Integer mesFin) throws Exception {
+    try {
+      BillingResponseDTO facturacion =
+              rateService.calcularFacturacionPorPeriodo(anio, mesInicio, mesFin);
+      return ResponseEntity.ok(facturacion);
+    } catch (Exception e) {
+      throw new Exception(e.getMessage());
     }
-//  @PostMapping("/createAndEnable")
-//  public ResponseEntity<?> createAndEnable(@RequestBody RateRequestDTO rateDTO) throws Exception {
-//    try {
-//      rateService.save(rateDTO);
-//      rateService.habilitarNuevosPreciosAPartirDe(rateDTO.getFecha());
-//      return ResponseEntity.status(201).body("Tarifa creada y habilitada con éxito");
-//    } catch (Exception e) {
-//      throw new Exception(e.getMessage());
-//    }
-//  }
+  }
 }
