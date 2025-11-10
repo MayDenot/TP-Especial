@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -28,14 +29,18 @@ public class ElectricScooterController {
 
 
     @PostMapping
-    public ResponseEntity<?> save(@RequestBody ElectricScooterRequestDTO electricScooter) {
-
+    public ResponseEntity<?> save(@Valid @RequestBody ElectricScooterRequestDTO electricScooter) {
         try {
             this.electricScooterService.save(electricScooter);
             return ResponseEntity.status(HttpStatus.CREATED).body("scooter creado con exito");
+        } catch (IllegalArgumentException e) {
+            // Validaciones de negocio específicas
+            Map<String, String> error = new HashMap<>();
+            error.put("mensaje", "Mal formato de monopatin");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
         } catch (Exception e) {
-
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error interno del servidor");
         }
     }
 
@@ -43,8 +48,8 @@ public class ElectricScooterController {
 
     @GetMapping("/latitud/{latitud}/longitud/{longitud}")
     public ResponseEntity<?> obtenerScootersPorLatitudYLongitud(
-            @PathVariable Double latitud,
-            @PathVariable Double longitud) {
+           @Valid @PathVariable Double latitud,
+             @Valid @PathVariable Double longitud) {
         try {
             List<ElectricScooterResponseDTO> scooters =
                     electricScooterService.obtenerCercanos(latitud, longitud);

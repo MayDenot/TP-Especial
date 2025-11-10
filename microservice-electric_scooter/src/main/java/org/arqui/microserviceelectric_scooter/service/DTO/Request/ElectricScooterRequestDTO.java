@@ -12,13 +12,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ElectricScooterRequestDTO {
 
-    @DecimalMin(value = "-90.0", message = "La latitud debe estar entre -90 y 90")
-    @DecimalMax(value = "90.0", message = "La latitud debe estar entre -90 y 90")
+    @DecimalMin(value = "-55.0", message = "La latitud debe estar en rango válido para Argentina")
+    @DecimalMax(value = "-21.0", message = "La latitud debe estar en rango válido para Argentina")
     @NotNull(message = "La latitud es obligatoria")
     private Double latitud;
 
-    @DecimalMin(value = "-180.0", message = "La longitud debe estar entre -180 y 180")
-    @DecimalMax(value = "180.0", message = "La longitud debe estar entre -180 y 180")
+    // Para Argentina, las longitudes están entre -73 y -53
+    @DecimalMin(value = "-73.0", message = "La longitud debe estar en rango válido para Argentina")
+    @DecimalMax(value = "-53.0", message = "La longitud debe estar en rango válido para Argentina")
     @NotNull(message = "La longitud es obligatoria")
     private Double longitud;
 
@@ -26,7 +27,7 @@ public class ElectricScooterRequestDTO {
     private Boolean habilitado;
 
     @NotNull(message = "El campo 'batería' es obligatorio")
-    @Min(value = 0, message = "La batería no puede ser menor que 0")
+    @Min(value = 1, message = "La batería debe ser mayor a 0")
     @Max(value = 100, message = "La batería no puede ser mayor que 100")
     private Integer bateria;
 
