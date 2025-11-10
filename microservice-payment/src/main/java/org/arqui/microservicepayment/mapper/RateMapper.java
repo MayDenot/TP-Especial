@@ -10,7 +10,7 @@ public class RateMapper {
     Rate rate = new Rate();
     rate.setTarifa(dto.getTarifa());
     rate.setTarifaExtra(dto.getTarifaExtra());
-    rate.setFecha(dto.getFecha());
+    rate.setFechaActualizacion(dto.getFechaActualizacion());
     rate.setVigente(dto.getVigente());
     return rate;
   }
@@ -20,7 +20,7 @@ public class RateMapper {
             rate.getId(),
             rate.getTarifa(),
             rate.getTarifaExtra(),
-            rate.getFecha(),
+            rate.getFechaActualizacion(),
             rate.getVigente()
     );
   }

@@ -125,4 +125,30 @@ public class RateService {
             .orElseThrow(() -> new EntityNotFoundException("No se encontró tarifa vigente para la fecha: " + fecha));
     return RateMapper.toResponse(rate);
   }
+
+  @Transactional(readOnly = true)
+  public RateResponseDTO getCurrentRate() {
+    Rate tarifa = rateRepository.findByVigenteTrue()
+            .orElseThrow(() -> new EntityNotFoundException("No hay tarifa vigente en este momento"));
+    return RateMapper.toResponse(tarifa);
+  }
+
+  @Transactional
+  public void activarTarifaPorFecha(LocalDateTime fecha) {
+    List<Rate> tarifas = rateRepository.findAll();
+
+    for (Rate t : tarifas) {
+      t.setVigente(false);
+    }
+
+    Rate tarifaVigente = rateRepository
+            .findRateByDate(fecha)
+            .orElse(null);
+
+    if (tarifaVigente != null) {
+      tarifaVigente.setVigente(true);
+    }
+
+    rateRepository.saveAll(tarifas);
+  }
 }

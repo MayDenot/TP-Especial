@@ -65,8 +65,8 @@ public class RateController {
     }
   }
 
-  @GetMapping("/current")
-  public ResponseEntity<RateResponseDTO> getRateByDate(@PathVariable LocalDateTime fecha) throws Exception {
+  @GetMapping("/byDate")
+  public ResponseEntity<RateResponseDTO> getRateByDate(@RequestParam LocalDateTime fecha) throws Exception {
     try {
       return ResponseEntity.ok(rateService.findRateByDate(fecha));
     } catch (Exception e) {
@@ -85,6 +85,25 @@ public class RateController {
       return ResponseEntity.ok(facturacion);
     } catch (Exception e) {
       throw new Exception(e.getMessage());
+    }
+  }
+
+  @GetMapping("/current")
+  public ResponseEntity<?> getCurrentRate() {
+    try {
+      return ResponseEntity.ok(rateService.getCurrentRate());
+    } catch (Exception e) {
+      return ResponseEntity.notFound().build();
+    }
+  }
+
+  @PostMapping("/activate")
+  public ResponseEntity<?> activarTarifasManualmente() {
+    try {
+      rateService.activarTarifaPorFecha(LocalDateTime.now());
+      return ResponseEntity.ok("Tarifa activada correctamente");
+    } catch (Exception e) {
+      return ResponseEntity.internalServerError().body("Error al activar tarifas: " + e.getMessage());
     }
   }
 }

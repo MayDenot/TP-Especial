@@ -91,12 +91,12 @@ INSERT INTO stop (id_stop, direccion, nombre, latitud, longitud) VALUES
 -- ========================================
 -- 5. TABLA: rate (Tarifas)
 -- ========================================
-INSERT INTO rate (id, tarifa, tarifaExtra, fecha, vigente) VALUES
-(1, 50.00, 100.00, '2024-01-01 00:00:00', FALSE),
+INSERT INTO rate (id, tarifa, tarifa_extra, fecha_actualizacion, vigente) VALUES
 (2, 60.00, 120.00, '2024-03-01 00:00:00', FALSE),
 (3, 70.00, 140.00, '2024-06-01 00:00:00', FALSE),
 (4, 80.00, 160.00, '2024-09-01 00:00:00', TRUE),
-(5, 85.00, 170.00, '2025-01-01 00:00:00', FALSE);
+(5, 85.00, 170.00, '2025-01-01 00:00:00', FALSE),
+(6, 50.00, 100.00, '2024-01-01 00:00:00', FALSE);
 
 -- ========================================
 -- 6. TABLA: travel (Viajes realizados)

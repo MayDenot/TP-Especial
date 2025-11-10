@@ -22,4 +22,6 @@ public interface RateRepository extends JpaRepository<Rate, Long> {
       )
   """)
   Optional<Rate> findRateByDate(LocalDateTime fechaViaje);
+
+  Optional<Rate> findByVigenteTrue();
 }
