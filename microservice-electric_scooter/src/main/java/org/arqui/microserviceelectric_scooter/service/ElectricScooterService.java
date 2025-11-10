@@ -158,9 +158,9 @@ public class ElectricScooterService {
                     ReporteUsoScooterDTO dto = ElectricScooterMapper.toReporte(scooter);
 
                     if (!incluirPausas) {
-                        // Si NO se incluyen pausas, restamos ese tiempo del total
-                        long tiempoSinPausas = dto.getTiempoTotalUsoSegundos() - dto.getTiempoEnMovimientoSegundos();
-                        dto.setTiempoTotalUsoSegundos(Math.max(tiempoSinPausas, 0));
+                        // Excluir las pausas del total de uso
+                        long tiempoSoloMovimiento = dto.getTiempoTotalUsoSegundos() - dto.getTiempoEnPausaSegundos();
+                        dto.setTiempoTotalUsoSegundos(Math.max(tiempoSoloMovimiento, 0));
                     }
 
                     return dto;

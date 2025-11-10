@@ -81,7 +81,7 @@ public class ElectricScooterController {
     @PutMapping("/{id}")
     public ResponseEntity<?> modifier(
             @Valid  @PathVariable String id,
-            @Valid  @RequestBody ElectricScooterRequestDTO electricScooterDTO) {
+            @RequestBody ElectricScooterRequestDTO electricScooterDTO) {
         try {
 
             electricScooterService.modifier(id, electricScooterDTO);
@@ -92,6 +92,7 @@ public class ElectricScooterController {
         }
 
     }
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminar( @Valid @PathVariable String id) {
