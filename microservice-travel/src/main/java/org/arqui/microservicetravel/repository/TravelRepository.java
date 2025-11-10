@@ -64,4 +64,3 @@ public interface TravelRepository extends JpaRepository<Travel, Long> {
             @Param("fechaInicio") LocalDate fechaInicio,
             @Param("fechaFin") LocalDate fechaFin);
 }
-

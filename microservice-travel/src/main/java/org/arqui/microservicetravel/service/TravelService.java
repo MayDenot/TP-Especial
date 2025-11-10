@@ -96,26 +96,21 @@ public class TravelService {
 
     @Transactional
     public TravelResponseDTO finalizarViaje(Long travelId, FinalizarViajeRequestDTO request) {
-        // Buscar el viaje
         Travel travel = travelRepository.findById(travelId)
                 .orElseThrow(() -> new RuntimeException("Viaje no encontrado con id: " + travelId));
 
-        // Validar que el viaje esté en curso
         if (travel.getFecha_hora_fin() != null) {
             throw new RuntimeException("El viaje ya fue finalizado");
         }
 
-        // Actualizar datos del viaje
+
         travel.setParada_fin(request.getParadaFinId());
         travel.setFecha_hora_fin(LocalDateTime.now());
 
-        // Calcular duración en minutos
         long minutos = ChronoUnit.MINUTES.between(travel.getFecha_hora_inicio(), travel.getFecha_hora_fin());
 
-        // Guardar viaje
         Travel travelFinalizado = travelRepository.save(travel);
 
-        // ⭐ ACTUALIZAR ESTADO DEL MONOPATÍN VIA FEIGN
         try {
             ActualizarEstadoParadaRequestDTO scooterRequest = new ActualizarEstadoParadaRequestDTO(
                     "DISPONIBLE",
@@ -129,13 +124,11 @@ public class TravelService {
                     scooterRequest
             );
 
-            System.out.println("✅ Monopatín " + travel.getMonopatin() +
+            System.out.println("Monopatín " + travel.getMonopatin() +
                     " actualizado a DISPONIBLE en parada " + request.getParadaFinId());
 
         } catch (Exception e) {
-            System.err.println("⚠ Error al actualizar estado del monopatín: " + e.getMessage());
-            // Decidir si hacer rollback o continuar
-            // throw new RuntimeException("Error al actualizar monopatín", e);
+            System.err.println("Error al actualizar estado del monopatín: " + e.getMessage());
         }
 
         return TravelMapper.toResponse(travelFinalizado);
@@ -153,18 +146,14 @@ public class TravelService {
     }
     
     private ViajeConCostoResponseDTO calcularCostoViaje(Travel viaje) {
-        // 1. Obtener tarifa vigente en la fecha del viaje
         RateInfoResponseDTO rate = rateFeignClient.getRateByDate(viaje.getFecha_hora_inicio());
-        
-        // 2. Obtener información de la cuenta
+
         AccountInfoResponseDTO account = accountFeignClient.getAccountByUserId(viaje.getUsuario());
-        
-        // 3. Calcular costo base
+
         Double costoBase = rate.getTarifa();
         Double costoExtra = 0.0;
         boolean tienePausaLarga = false;
-        
-        // 4. Verificar pausas > 15 minutos
+
         if (viaje.getPausas() != null && !viaje.getPausas().isEmpty()) {
             for (Pause pausa : viaje.getPausas()) {
                 if (pausa.getHora_inicio() != null && pausa.getHora_fin() != null) {
@@ -180,11 +169,9 @@ public class TravelService {
                 }
             }
         }
-        
-        // 5. Costo total (sin aplicar descuentos de premium aún)
+
         Double costoTotal = costoBase + costoExtra;
-        
-        // 6. Crear DTO
+
         ViajeConCostoResponseDTO dto = new ViajeConCostoResponseDTO();
         dto.setId_travel(viaje.getId_travel());
         dto.setFecha_hora_inicio(viaje.getFecha_hora_inicio());

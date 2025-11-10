@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 public interface ElectricScooterClient {
 
     @GetMapping("/api/scooters/{id}")
-    public ElectricScooterResponseDTO getElectricScooter(@PathVariable String id);
+    ElectricScooterResponseDTO getElectricScooter(@PathVariable String id);
 
     @PutMapping("/api/scooters/{id}/estado")
     ElectricScooterResponseDTO actualizarEstadoEnParada(
