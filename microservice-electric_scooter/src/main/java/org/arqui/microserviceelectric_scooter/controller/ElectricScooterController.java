@@ -75,8 +75,8 @@ public class ElectricScooterController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> modifier(
-            @PathVariable String id,
-            @RequestBody ElectricScooterRequestDTO electricScooterDTO) {
+            @Valid  @PathVariable String id,
+            @Valid  @RequestBody ElectricScooterRequestDTO electricScooterDTO) {
         try {
 
             electricScooterService.modifier(id, electricScooterDTO);
@@ -89,7 +89,7 @@ public class ElectricScooterController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> eliminar(@PathVariable String id) {
+    public ResponseEntity<?> eliminar( @Valid @PathVariable String id) {
         try {
             this.electricScooterService.deleteById(id);
             return ResponseEntity.status(HttpStatus.OK).body("eliminado con exito");
@@ -132,7 +132,7 @@ public class ElectricScooterController {
 
     @PutMapping("/{id}/estado")
     public ResponseEntity<?> actualizarEstadoEnParada(
-            @PathVariable String id,
+           @Valid @PathVariable String id,
             @Valid @RequestBody ElectricScooterRequestDTO dto) {
         try {
             ElectricScooterResponseDTO scooter = electricScooterService.actualizarEstadoEnParada(

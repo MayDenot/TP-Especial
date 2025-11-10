@@ -23,7 +23,7 @@ import java.util.Map;
 public class ElectricScooter {
 
     @Id
-    private String id; // Mongo usa IDs tipo String (ObjectId)
+    private String _id; // Mongo usa IDs tipo String (ObjectId)
 
     private Double longitud;
     private Double latitud;
