@@ -6,6 +6,7 @@ import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.arqui.microserviceelectric_scooter.EstadoScooter;
 
 @Data
 @NoArgsConstructor
@@ -45,7 +46,7 @@ public class ElectricScooterRequestDTO {
     private String codigoQR; // opcional
 
     @NotBlank(message = "El estado es obligatorio")
-    private String estado;
+    private EstadoScooter estado;
 
     private Long idParadaActual;
 }
