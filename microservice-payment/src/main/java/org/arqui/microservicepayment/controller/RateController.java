@@ -1,6 +1,7 @@
 package org.arqui.microservicepayment.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.arqui.microservicepayment.entity.Rate;
 import org.arqui.microservicepayment.service.DTO.request.RateRequestDTO;
 import org.arqui.microservicepayment.service.DTO.response.BillingResponseDTO;
 import org.arqui.microservicepayment.service.DTO.response.RateResponseDTO;
@@ -65,15 +66,6 @@ public class RateController {
     }
   }
 
-  @GetMapping("/byDate")
-  public ResponseEntity<RateResponseDTO> getRateByDate(@RequestParam LocalDateTime fecha) throws Exception {
-    try {
-      return ResponseEntity.ok(rateService.findRateByDate(fecha));
-    } catch (Exception e) {
-      throw new Exception(e.getMessage());
-    }
-  }
-
   @GetMapping("/billing")
   public ResponseEntity<BillingResponseDTO> obtenerFacturacionPorPeriodo(
           @RequestParam Integer anio,
@@ -88,22 +80,13 @@ public class RateController {
     }
   }
 
-  @GetMapping("/current")
-  public ResponseEntity<?> getCurrentRate() {
+  @GetMapping("/byDate")
+  public ResponseEntity<RateResponseDTO> getRateByDate(@RequestParam(required = false)  LocalDateTime fecha) throws Exception {
     try {
-      return ResponseEntity.ok(rateService.getCurrentRate());
+      LocalDateTime fechaConsulta = fecha != null ? fecha : LocalDateTime.now();
+      return ResponseEntity.ok(rateService.findRateByDate(fechaConsulta));
     } catch (Exception e) {
-      return ResponseEntity.notFound().build();
-    }
-  }
-
-  @PostMapping("/activate")
-  public ResponseEntity<?> activarTarifasManualmente() {
-    try {
-      rateService.activarTarifaPorFecha(LocalDateTime.now());
-      return ResponseEntity.ok("Tarifa activada correctamente");
-    } catch (Exception e) {
-      return ResponseEntity.internalServerError().body("Error al activar tarifas: " + e.getMessage());
+      throw new Exception(e.getMessage());
     }
   }
 }

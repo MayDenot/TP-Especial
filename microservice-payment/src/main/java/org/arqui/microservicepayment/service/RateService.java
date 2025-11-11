@@ -2,7 +2,6 @@ package org.arqui.microservicepayment.service;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import net.bytebuddy.asm.Advice;
 import org.arqui.microservicepayment.entity.Rate;
 import org.arqui.microservicepayment.feignClient.TravelClient;
 import org.arqui.microservicepayment.mapper.RateMapper;
@@ -119,36 +118,28 @@ public class RateService {
     );
   }
 
-  @Transactional(readOnly = true)
+  @Transactional
   public RateResponseDTO findRateByDate(LocalDateTime fecha) {
+    activarTarifaSiCorresponde(fecha);
+
     Rate rate = rateRepository.findRateByDate(fecha)
-            .orElseThrow(() -> new EntityNotFoundException("No se encontró tarifa vigente para la fecha: " + fecha));
+            .orElseThrow(() -> new EntityNotFoundException(
+                    "No se encontró tarifa vigente para la fecha: " + fecha));
     return RateMapper.toResponse(rate);
   }
 
-  @Transactional(readOnly = true)
-  public RateResponseDTO getCurrentRate() {
-    Rate tarifa = rateRepository.findByVigenteTrue()
-            .orElseThrow(() -> new EntityNotFoundException("No hay tarifa vigente en este momento"));
-    return RateMapper.toResponse(tarifa);
-  }
+  private void activarTarifaSiCorresponde(LocalDateTime fecha) {
+    Rate tarifaQueDeberiaEstarVigente = rateRepository.findRateByDate(fecha).orElse(null);
 
-  @Transactional
-  public void activarTarifaPorFecha(LocalDateTime fecha) {
-    List<Rate> tarifas = rateRepository.findAll();
+    if (tarifaQueDeberiaEstarVigente != null) {
+      if (!Boolean.TRUE.equals(tarifaQueDeberiaEstarVigente.getVigente())) {
+        List<Rate> todasLasTarifas = rateRepository.findAll();
+        todasLasTarifas.forEach(t -> t.setVigente(false));
 
-    for (Rate t : tarifas) {
-      t.setVigente(false);
+        tarifaQueDeberiaEstarVigente.setVigente(true);
+
+        rateRepository.saveAll(todasLasTarifas);
+      }
     }
-
-    Rate tarifaVigente = rateRepository
-            .findRateByDate(fecha)
-            .orElse(null);
-
-    if (tarifaVigente != null) {
-      tarifaVigente.setVigente(true);
-    }
-
-    rateRepository.saveAll(tarifas);
   }
 }
