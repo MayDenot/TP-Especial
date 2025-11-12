@@ -8,7 +8,7 @@ USE `TP-Especial`;
 -- ========================================
 -- 1. TABLA: user
 -- ========================================
-INSERT INTO user (id_user, nombreUsuario, nombre, apellido, email, numeroCelular, rol, latitud, longitud) VALUES
+INSERT INTO user (id_user, nombre_usuario, nombre, apellido, email, numero_celular, rol, latitud, longitud) VALUES
 (1, 'jperez', 'Juan', 'Pérez', 'juan.perez@email.com', 1512345678, 'USUARIO', -37.3215, -59.1333),
 (2, 'mrodriguez', 'María', 'Rodríguez', 'maria.rodriguez@email.com', 1523456789, 'USUARIO', -37.3256, -59.1389),
 (3, 'cgomez', 'Carlos', 'Gómez', 'carlos.gomez@email.com', 1534567890, 'USUARIO', -37.3189, -59.1421),
@@ -25,7 +25,7 @@ INSERT INTO user (id_user, nombreUsuario, nombre, apellido, email, numeroCelular
 -- ========================================
 -- 2. TABLA: account
 -- ========================================
-INSERT INTO account (id_account, fechaDeAlta, montoDisponible, activa, tipoCuenta) VALUES
+INSERT INTO account (id_account, fecha_de_alta, monto_disponible, activa, tipo_cuenta) VALUES
 (1, '2024-01-15 10:00:00', 5000.00, TRUE, 'PREPAGA'),
 (2, '2024-01-20 11:30:00', 3500.50, TRUE, 'PREPAGA'),
 (3, '2024-02-05 09:15:00', 7200.75, TRUE, 'PREPAGA'),
@@ -102,7 +102,7 @@ INSERT INTO rate (id, tarifa, tarifa_extra, fecha_actualizacion, vigente) VALUES
 -- 6. TABLA: travel (Viajes realizados)
 -- ========================================
 -- Nota: Los IDs de monopatín hacen referencia a documentos en MongoDB
-INSERT INTO travel (id_travel, fecha_hora_inicio, fecha_hora_fin, kmRecorridos, pausado, tarifa, parada_inicio, parada_fin, monopatin, usuario) VALUES
+INSERT INTO travel (id_travel, fecha_hora_inicio, fecha_hora_fin, km_recorridos, pausado, tarifa, parada_inicio, parada_fin, monopatin, usuario) VALUES
 -- Viajes completados
 (1, '2024-09-15 08:30:00', '2024-09-15 08:50:00', 5, FALSE, 4, 1, 2, 'SCOOTER-001', 1),
 (2, '2024-09-15 09:15:00', '2024-09-15 09:40:00', 7, FALSE, 4, 2, 3, 'SCOOTER-002', 2),

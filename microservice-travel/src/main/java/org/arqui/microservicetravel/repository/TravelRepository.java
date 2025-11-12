@@ -43,8 +43,8 @@ public interface TravelRepository extends JpaRepository<Travel, Long> {
         SELECT t
         FROM Travel t
         LEFT JOIN FETCH t.pausas
-        WHERE YEAR(t.fecha_hora_inicio) = :anio
-        AND MONTH(t.fecha_hora_inicio) BETWEEN :mesInicio AND :mesFin
+        WHERE FUNCTION('YEAR', t.fecha_hora_inicio) = :anio
+        AND FUNCTION('MONTH', t.fecha_hora_inicio) BETWEEN :mesInicio AND :mesFin
         ORDER BY t.fecha_hora_inicio
     """)
     List<Travel> buscarViajesParaFacturacion(@Param("anio") Integer anio, 

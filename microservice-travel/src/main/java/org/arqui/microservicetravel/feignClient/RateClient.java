@@ -7,9 +7,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDateTime;
 
-@FeignClient(name = "microservice-payment")
+@FeignClient(name = "microservice-payment", url = "http://localhost:8083")
 public interface RateClient {
 
-    @GetMapping("/api/rates/vigente")
+    @GetMapping("/api/rates/byDate")
     RateInfoResponseDTO getRateByDate(@RequestParam LocalDateTime fecha);
 }
