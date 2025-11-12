@@ -138,19 +138,64 @@ public class TravelService {
 
     @Transactional(readOnly = true)
     public List<ViajeConCostoResponseDTO> calcularCostosDeViajes(Integer anio, Integer mesInicio, Integer mesFin) {
+        System.out.println("TravelService: Calculando costos para periodo " + anio + "/" + mesInicio + "-" + mesFin);
         List<Travel> viajes = travelRepository.buscarViajesParaFacturacion(anio, mesInicio, mesFin);
-        
+        System.out.println("TravelService: Encontrados " + viajes.size() + " viajes");
+
         return viajes.stream()
-                .map(this::calcularCostoViaje)
+                .map(viaje -> {
+                    System.out.println("TravelService: Procesando viaje ID=" + viaje.getId_travel() +
+                            ", fecha=" + viaje.getFecha_hora_inicio());
+                    return calcularCostoViaje(viaje);
+                })
                 .collect(Collectors.toList());
     }
     
     private ViajeConCostoResponseDTO calcularCostoViaje(Travel viaje) {
-        RateInfoResponseDTO rate = rateFeignClient.getRateByDate(viaje.getFecha_hora_inicio());
+        // Validar que el viaje tenga fecha de inicio
+        if (viaje.getFecha_hora_inicio() == null) {
+            throw new RuntimeException("El viaje con ID " + viaje.getId_travel() + " no tiene fecha de inicio");
+        }
 
-        AccountInfoResponseDTO account = accountFeignClient.getAccountByUserId(viaje.getUsuario());
+        // Obtener la tarifa con manejo de errores
+        RateInfoResponseDTO rate;
+        try {
+            // Formatear la fecha como ISO-8601 string para el Feign client
+            String fechaISO = viaje.getFecha_hora_inicio().toString();
+            System.out.println("TravelService: Llamando a RateClient.getRateByDate con fecha: " + fechaISO);
+            rate = rateFeignClient.getRateByDate(fechaISO);
+            if (rate == null) {
+                throw new RuntimeException("No se encontró tarifa para la fecha: " + viaje.getFecha_hora_inicio());
+            }
+            System.out.println("TravelService: Tarifa obtenida: " + rate.getTarifa());
+        } catch (Exception e) {
+            System.err.println("TravelService: ERROR al obtener tarifa para viaje " + viaje.getId_travel() + ": " + e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException("Error al obtener tarifa para viaje " + viaje.getId_travel() +
+                    " con fecha " + viaje.getFecha_hora_inicio() + ": " + e.getMessage(), e);
+        }
 
-        Double costoBase = rate.getTarifa();
+        // Obtener la cuenta con manejo de errores y fallback
+        AccountInfoResponseDTO account;
+        try {
+            System.out.println("TravelService: Llamando a AccountClient.getAccountByUserId con usuario: " + viaje.getUsuario());
+            account = accountFeignClient.getAccountByUserId(viaje.getUsuario());
+            if (account == null) {
+                System.err.println("TravelService: ADVERTENCIA - Account service retornó null para usuario " + viaje.getUsuario() + ", usando cuenta REGULAR por defecto");
+                account = new AccountInfoResponseDTO();
+                account.setTipoCuenta("REGULAR");
+            } else {
+                System.out.println("TravelService: Cuenta obtenida: tipo=" + account.getTipoCuenta());
+            }
+        } catch (Exception e) {
+            System.err.println("TravelService: ADVERTENCIA - Error al obtener cuenta para usuario " + viaje.getUsuario() + ": " + e.getMessage());
+            System.err.println("TravelService: Usando tipo de cuenta REGULAR como fallback");
+            // Crear una cuenta por defecto en lugar de fallar
+            account = new AccountInfoResponseDTO();
+            account.setTipoCuenta("REGULAR");
+        }
+
+        Double costoBase = rate.getTarifa() != null ? rate.getTarifa() : 0.0;
         Double costoExtra = 0.0;
         boolean tienePausaLarga = false;
 
@@ -158,13 +203,18 @@ public class TravelService {
             for (Pause pausa : viaje.getPausas()) {
                 if (pausa.getHora_inicio() != null && pausa.getHora_fin() != null) {
                     long minutosEnPausa = Duration.between(
-                        pausa.getHora_inicio(), 
+                        pausa.getHora_inicio(),
                         pausa.getHora_fin()
                     ).toMinutes();
-                    
+
                     if (minutosEnPausa > 15) {
-                        costoExtra += rate.getTarifaExtra();
-                        tienePausaLarga = true;
+                        // Solo añadir tarifa extra si está definida
+                        if (rate.getTarifaExtra() != null) {
+                            costoExtra += rate.getTarifaExtra();
+                            tienePausaLarga = true;
+                        } else {
+                            System.out.println("ADVERTENCIA: Pausa larga detectada pero tarifaExtra es NULL");
+                        }
                     }
                 }
             }
@@ -175,14 +225,19 @@ public class TravelService {
         ViajeConCostoResponseDTO dto = new ViajeConCostoResponseDTO();
         dto.setId_travel(viaje.getId_travel());
         dto.setFecha_hora_inicio(viaje.getFecha_hora_inicio());
-        dto.setKmRecorridos(viaje.getKmRecorridos());
+        dto.setKmRecorridos(viaje.getKmRecorridos() != null ? viaje.getKmRecorridos() : 0);
         dto.setUsuario(viaje.getUsuario());
-        dto.setTipoCuenta(account.getTipoCuenta());
+        dto.setTipoCuenta(account.getTipoCuenta() != null ? account.getTipoCuenta() : "REGULAR");
         dto.setCostoBase(costoBase);
         dto.setCostoExtra(costoExtra);
         dto.setCostoTotal(costoTotal);
         dto.setTienePausaLarga(tienePausaLarga);
-        
+
+        System.out.println("TravelService: Viaje procesado - ID=" + dto.getId_travel() +
+                ", CostoBase=" + dto.getCostoBase() +
+                ", CostoExtra=" + dto.getCostoExtra() +
+                ", CostoTotal=" + dto.getCostoTotal());
+
         return dto;
     }
 }

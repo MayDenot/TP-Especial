@@ -70,4 +70,12 @@ public class AccountService {
         return AccountMapper.toResponse(cuentaAnulada);
     }
 
+    // Obtener cuenta activa por usuario ID
+    @Transactional(readOnly = true)
+    public AccountResponseDTO findByUserId(Long userId) {
+        Account cuenta = accountRepository.findFirstActiveAccountByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("No se encontró cuenta activa para usuario con id: " + userId));
+        return AccountMapper.toResponse(cuenta);
+    }
+
 }

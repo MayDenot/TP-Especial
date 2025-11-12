@@ -65,7 +65,17 @@ public class RateService {
 
   @Transactional(readOnly = true)
   public BillingResponseDTO calcularFacturacionPorPeriodo(Integer anio, Integer mesInicio, Integer mesFin) {
-    List<TravelWithCostRequestDTO> viajes = travelClient.getViajesConCostos(anio, mesInicio, mesFin);
+    System.out.println("RateService: Iniciando calculo de facturación para " + anio + "/" + mesInicio + "-" + mesFin);
+
+    List<TravelWithCostRequestDTO> viajes;
+    try {
+      viajes = travelClient.getViajesConCostos(anio, mesInicio, mesFin);
+      System.out.println("RateService: Recibidos " + viajes.size() + " viajes del TravelClient");
+    } catch (Exception e) {
+      System.err.println("RateService: ERROR al obtener viajes del TravelClient: " + e.getMessage());
+      e.printStackTrace();
+      throw new RuntimeException("Error al obtener viajes para facturación: " + e.getMessage(), e);
+    }
 
     double totalFacturado = 0.0;
     double totalTarifasBase = 0.0;
@@ -120,11 +130,33 @@ public class RateService {
 
   @Transactional
   public RateResponseDTO findRateByDate(LocalDateTime fecha) {
+    System.out.println("RateService: Buscando tarifa para fecha: " + fecha);
+
     activarTarifaSiCorresponde(fecha);
 
-    Rate rate = rateRepository.findRateByDate(fecha)
-            .orElseThrow(() -> new EntityNotFoundException(
-                    "No se encontró tarifa vigente para la fecha: " + fecha));
+    // Intentar buscar por fecha
+    Rate rate = rateRepository.findRateByDate(fecha).orElse(null);
+
+    // Si no se encuentra por fecha, usar la tarifa vigente como fallback
+    if (rate == null) {
+        System.out.println("No se encontró tarifa por fecha, buscando tarifa vigente...");
+        List<Rate> allRates = rateRepository.findAll();
+        System.out.println("Tarifas disponibles en DB: " + allRates.size());
+        allRates.forEach(r -> System.out.println("  - Tarifa ID: " + r.getId() +
+                ", Tarifa: " + r.getTarifa() +
+                ", Tarifa Extra: " + r.getTarifaExtra() +
+                ", Fecha actualización: " + r.getFechaActualizacion() +
+                ", Vigente: " + r.getVigente()));
+
+        rate = rateRepository.findByVigenteTrue()
+                .orElseThrow(() -> new EntityNotFoundException(
+                    "No se encontró tarifa vigente ni por fecha " + fecha +
+                    ". Total tarifas en DB: " + allRates.size() +
+                    ". Todas las fechas de actualización son NULL. Configure fechaActualizacion o marque una tarifa como vigente."));
+        System.out.println("Usando tarifa vigente como fallback: ID=" + rate.getId());
+    }
+
+    System.out.println("Tarifa encontrada: ID=" + rate.getId() + ", Tarifa=" + rate.getTarifa() + ", TarifaExtra=" + rate.getTarifaExtra());
     return RateMapper.toResponse(rate);
   }
 

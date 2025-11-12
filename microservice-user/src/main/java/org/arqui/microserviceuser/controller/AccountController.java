@@ -84,4 +84,22 @@ public class AccountController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
+
+    // Obtener cuenta activa por usuario ID
+    @GetMapping("/usuario/{userId}")
+    public ResponseEntity<?> findByUserId(@PathVariable Long userId) {
+        try {
+            System.out.println("AccountController: Buscando cuenta para usuario ID: " + userId);
+            AccountResponseDTO cuenta = accountService.findByUserId(userId);
+            System.out.println("AccountController: Cuenta encontrada - ID: " + cuenta.getId_account() + ", Tipo: " + cuenta.getTipoCuenta());
+            return ResponseEntity.ok(cuenta);
+        } catch (RuntimeException e) {
+            System.err.println("AccountController: No se encontró cuenta para usuario " + userId + ": " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No se encontró cuenta activa para usuario con id: " + userId);
+        } catch (Exception e) {
+            System.err.println("AccountController: Error interno: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error interno: " + e.getMessage());
+        }
+    }
 }

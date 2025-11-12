@@ -131,13 +131,20 @@ public class TravelController {
     }
 
     @GetMapping("/travelsWithCosts")
-    public ResponseEntity<List<ViajeConCostoResponseDTO>> getViajesConCostos(
+    public ResponseEntity<?> getViajesConCostos(
             @RequestParam Integer anio,
             @RequestParam Integer mesInicio,
             @RequestParam Integer mesFin) {
-
-        List<ViajeConCostoResponseDTO> viajes = travelService.calcularCostosDeViajes(anio, mesInicio, mesFin);
-        return ResponseEntity.ok(viajes);
+        try {
+            List<ViajeConCostoResponseDTO> viajes = travelService.calcularCostosDeViajes(anio, mesInicio, mesFin);
+            return ResponseEntity.ok(viajes);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Error al calcular costos de viajes: " + e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error interno al procesar viajes: " + e.getMessage());
+        }
     }
 
     @PutMapping("/{id}/finalizar")

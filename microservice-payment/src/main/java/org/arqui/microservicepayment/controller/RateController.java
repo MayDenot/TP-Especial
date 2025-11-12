@@ -1,5 +1,6 @@
 package org.arqui.microservicepayment.controller;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.arqui.microservicepayment.entity.Rate;
 import org.arqui.microservicepayment.service.DTO.request.RateRequestDTO;
@@ -81,12 +82,27 @@ public class RateController {
   }
 
   @GetMapping("/byDate")
-  public ResponseEntity<RateResponseDTO> getRateByDate(@RequestParam(required = false)  LocalDateTime fecha) throws Exception {
+  public ResponseEntity<?> getRateByDate(@RequestParam(required = false) String fecha) {
     try {
-      LocalDateTime fechaConsulta = fecha != null ? fecha : LocalDateTime.now();
-      return ResponseEntity.ok(rateService.findRateByDate(fechaConsulta));
+      LocalDateTime fechaConsulta;
+      if (fecha != null && !fecha.isEmpty()) {
+        // Añadir segundos si no están presentes (formato: 2024-09-15T08:30)
+        if (fecha.matches("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}")) {
+          fecha = fecha + ":00";
+        }
+        fechaConsulta = LocalDateTime.parse(fecha);
+      } else {
+        fechaConsulta = LocalDateTime.now();
+      }
+
+      System.out.println("Buscando tarifa para fecha: " + fechaConsulta);
+      RateResponseDTO rate = rateService.findRateByDate(fechaConsulta);
+      return ResponseEntity.ok(rate);
+    } catch (EntityNotFoundException e) {
+      return ResponseEntity.status(404).body("No se encontró tarifa para la fecha solicitada: " + e.getMessage());
     } catch (Exception e) {
-      throw new Exception(e.getMessage());
+      e.printStackTrace();
+      return ResponseEntity.status(500).body("Error al procesar fecha: " + e.getMessage());
     }
   }
 }
