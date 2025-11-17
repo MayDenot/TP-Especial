@@ -147,7 +147,7 @@ public class TravelController {
         }
     }
 
-    @PutMapping("/{id}/finalizar")
+    @PutMapping("/finalizar/{id}")
     public ResponseEntity<?> finalizarViaje(
             @PathVariable Long id,
             @RequestBody FinalizarViajeRequestDTO request) {

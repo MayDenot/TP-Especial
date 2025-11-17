@@ -14,9 +14,9 @@ public class TravelRequestDTO {
     private LocalDateTime fecha_hora_fin;
     private Integer kmRecorridos;
     private Boolean pausado;
-    private Long tarifa;
     private Long parada_inicio;
     private Long parada_fin;
     private String monopatin;
     private Long usuario;
+    private Double costo;
 }

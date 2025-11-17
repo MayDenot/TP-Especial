@@ -16,13 +16,8 @@ public class Pause {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id_pause;
-
     @Column
-    private LocalDateTime hora_inicio;
-
-    @Column
-    private LocalDateTime hora_fin;
-
+    private Integer duracion;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_travel")
     @JsonBackReference

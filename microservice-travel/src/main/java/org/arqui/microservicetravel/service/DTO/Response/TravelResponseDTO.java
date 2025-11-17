@@ -18,9 +18,9 @@ public class TravelResponseDTO {
     private Integer kmRecorridos;
     private Boolean pausado;
     private List<Pause> pausas;
-    private Long tarifa;
     private Long parada_inicio;
     private Long parada_fin;
     private String monopatin;
     private Long usuario;
+    private Double costo;
 }

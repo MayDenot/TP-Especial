@@ -36,7 +36,7 @@ public interface TravelRepository extends JpaRepository<Travel, Long> {
         FROM Travel t
         WHERE t.fecha_hora_inicio BETWEEN :inicio AND :fin
         ORDER BY t.fecha_hora_inicio
-""")
+    """)
     List<Long> buscarTarifas(@Param("inicio") LocalDateTime inicio, @Param("fin") LocalDateTime fin);
 
     @Query("""
@@ -63,4 +63,11 @@ public interface TravelRepository extends JpaRepository<Travel, Long> {
             @Param("userId") Long userId,
             @Param("fechaInicio") LocalDate fechaInicio,
             @Param("fechaFin") LocalDate fechaFin);
+
+    @Query("""
+        SELECT SUM(p.duracion)
+        FROM Travel t
+        JOIN t.pausas p
+    """)
+    Integer duracionDePausas();
 }
