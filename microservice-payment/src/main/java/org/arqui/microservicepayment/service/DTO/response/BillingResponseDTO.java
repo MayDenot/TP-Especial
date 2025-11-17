@@ -11,9 +11,5 @@ public class BillingResponseDTO {
   private Integer anio;
   private Integer mesInicio;
   private Integer mesFin;
-  private Double totalFacturado;
-  private Integer totalViajes;
-  private Double totalTarifasBase;
-  private Double totalTarifasExtra;
-  private Double totalDescuentosPremium;
+  private Double total;
 }

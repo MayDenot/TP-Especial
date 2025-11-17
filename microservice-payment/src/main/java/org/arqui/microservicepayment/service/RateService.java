@@ -7,16 +7,14 @@ import org.arqui.microservicepayment.feignClient.TravelClient;
 import org.arqui.microservicepayment.mapper.RateMapper;
 import org.arqui.microservicepayment.repository.RateRepository;
 import org.arqui.microservicepayment.service.DTO.request.RateRequestDTO;
-import org.arqui.microservicepayment.service.DTO.request.TravelWithCostRequestDTO;
 import org.arqui.microservicepayment.service.DTO.response.BillingResponseDTO;
 import org.arqui.microservicepayment.service.DTO.response.RateResponseDTO;
+import org.arqui.microservicepayment.service.DTO.response.TravelResponseDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -63,8 +61,9 @@ public class RateService {
 
   @Transactional(readOnly = true)
   public BillingResponseDTO calcularFacturacionPorPeriodo(Integer anio, Integer mesInicio, Integer mesFin) {
+    List<TravelResponseDTO> viajes;
+    double total = 0.0;
 
-    List<TravelWithCostRequestDTO> viajes;
     try {
       viajes = travelClient.getViajesConCostos(anio, mesInicio, mesFin);
     } catch (Exception e) {
@@ -72,54 +71,15 @@ public class RateService {
       throw new RuntimeException("Error al obtener viajes para facturación: " + e.getMessage(), e);
     }
 
-    double totalFacturado = 0.0;
-    double totalTarifasBase = 0.0;
-    double totalTarifasExtra = 0.0;
-    double totalDescuentosPremium = 0.0;
-
-    Map<String, Integer> kmPorUsuarioPorMes = new HashMap<>();
-
-    for (TravelWithCostRequestDTO viaje : viajes) {
-      double costoFinal = viaje.getCostoTotal();
-
-      totalTarifasBase += viaje.getCostoBase();
-      totalTarifasExtra += viaje.getCostoExtra();
-
-      if ("PREMIUM".equalsIgnoreCase(viaje.getTipoCuenta())) {
-        String keyUsuarioMes = viaje.getUsuario() + "-" +
-                viaje.getFecha_hora_inicio().getYear() + "-" +
-                viaje.getFecha_hora_inicio().getMonthValue();
-
-        int kmAcumulados = kmPorUsuarioPorMes.getOrDefault(keyUsuarioMes, 0);
-        int kmViaje = viaje.getKmRecorridos() != null ? viaje.getKmRecorridos() : 0;
-
-        if (kmAcumulados >= 100) {
-          double descuento = costoFinal * 0.5;
-          costoFinal -= descuento;
-          totalDescuentosPremium += descuento;
-        } else if (kmAcumulados + kmViaje > 100) {
-          int kmConDescuento = (kmAcumulados + kmViaje) - 100;
-          double proporcionDescuento = (double) kmConDescuento / kmViaje;
-          double descuento = costoFinal * proporcionDescuento * 0.5;
-          costoFinal -= descuento;
-          totalDescuentosPremium += descuento;
-        }
-
-        kmPorUsuarioPorMes.put(keyUsuarioMes, kmAcumulados + kmViaje);
-      }
-
-      totalFacturado += costoFinal;
+    for (TravelResponseDTO viaje : viajes) {
+      total += viaje.getCosto();
     }
 
     return new BillingResponseDTO(
             anio,
             mesInicio,
             mesFin,
-            totalFacturado,
-            viajes.size(),
-            totalTarifasBase,
-            totalTarifasExtra,
-            totalDescuentosPremium
+            total
     );
   }
 
