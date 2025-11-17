@@ -82,10 +82,10 @@ public class TravelService {
         return travelRepository.buscarUsuariosConMasViajes(inicio, fin);
     }
 
-    @Transactional(readOnly = true)
-    public List<Long> buscarTarifas(LocalDateTime inicio, LocalDateTime fin) {
-        return travelRepository.buscarTarifas(inicio, fin);
-    }
+//    @Transactional(readOnly = true)
+//    public List<Long> buscarTarifas(LocalDateTime inicio, LocalDateTime fin) {
+//        return travelRepository.buscarTarifas(inicio, fin);
+//    }
 
     @Transactional(readOnly = true)
     public List<TravelResponseDTO> obtenerViajesPorUsuario(Long userId, LocalDate fechaInicio, LocalDate fechaFin) {

@@ -11,11 +11,11 @@ public class TravelMapper {
         travel.setFecha_hora_fin(dto.getFecha_hora_fin());
         travel.setKmRecorridos(dto.getKmRecorridos());
         travel.setPausado(dto.getPausado());
-        travel.setTarifa(dto.getTarifa());
         travel.setParada_inicio(dto.getParada_inicio());
         travel.setParada_fin(dto.getParada_fin());
         travel.setMonopatin(dto.getMonopatin());
         travel.setUsuario(dto.getUsuario());
+        travel.setCosto(dto.getCosto());
         return travel;
     }
 
@@ -27,11 +27,11 @@ public class TravelMapper {
                 travel.getKmRecorridos(),
                 travel.getPausado(),
                 travel.getPausas(),
-                travel.getTarifa(),
                 travel.getParada_inicio(),
                 travel.getParada_fin(),
                 travel.getMonopatin(),
-                travel.getUsuario()
+                travel.getUsuario(),
+                travel.getCosto()
         );
     }
 }

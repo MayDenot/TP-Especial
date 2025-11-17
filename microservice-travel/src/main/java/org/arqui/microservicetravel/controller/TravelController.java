@@ -98,16 +98,16 @@ public class TravelController {
         }
     }
 
-    @GetMapping("/rates/startDate/{inicio}/endDate/{fin}")
-    public ResponseEntity<?> buscarTarifas(@PathVariable LocalDateTime inicio, @PathVariable LocalDateTime fin) throws Exception {
-        try {
-            List <Long> tarifas = travelService.buscarTarifas(inicio, fin);
-            return ResponseEntity.ok(tarifas);
-        }
-        catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error: " + e.getMessage());
-        }
-    }
+//    @GetMapping("/rates/startDate/{inicio}/endDate/{fin}")
+//    public ResponseEntity<?> buscarTarifas(@PathVariable LocalDateTime inicio, @PathVariable LocalDateTime fin) throws Exception {
+//        try {
+//            List <Long> tarifas = travelService.buscarTarifas(inicio, fin);
+//            return ResponseEntity.ok(tarifas);
+//        }
+//        catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error: " + e.getMessage());
+//        }
+//    }
 
     @GetMapping("/usuario/{userId}")
     public ResponseEntity<?> getViajesPorUsuario(

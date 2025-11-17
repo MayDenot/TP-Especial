@@ -31,13 +31,13 @@ public interface TravelRepository extends JpaRepository<Travel, Long> {
 """)
     List<Long> buscarUsuariosConMasViajes(@Param("inicio")LocalDate inicio, @Param("fin") LocalDate fin);
 
-    @Query("""
-        SELECT t.tarifa
-        FROM Travel t
-        WHERE t.fecha_hora_inicio BETWEEN :inicio AND :fin
-        ORDER BY t.fecha_hora_inicio
-    """)
-    List<Long> buscarTarifas(@Param("inicio") LocalDateTime inicio, @Param("fin") LocalDateTime fin);
+//    @Query("""
+//        SELECT
+//        FROM Travel t
+//        WHERE t.fecha_hora_inicio BETWEEN :inicio AND :fin
+//        ORDER BY t.fecha_hora_inicio
+//    """)
+//    List<Long> buscarTarifas(@Param("inicio") LocalDateTime inicio, @Param("fin") LocalDateTime fin);
 
     @Query("""
         SELECT t
