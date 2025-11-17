@@ -25,11 +25,9 @@ public class Travel {
     private Integer kmRecorridos;
     @Column
     private Boolean pausado;
-
     @OneToMany(mappedBy = "travel", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<Pause> pausas;
-
     @Column
     private Long tarifa;
     @Column
@@ -40,4 +38,6 @@ public class Travel {
     private String monopatin;
     @Column
     private Long usuario;
+    @Column
+    private Double costo;
 }
