@@ -29,8 +29,6 @@ public class Travel {
     @JsonManagedReference
     private List<Pause> pausas;
     @Column
-    private Long tarifa;
-    @Column
     private Long parada_inicio;
     @Column
     private Long parada_fin;
