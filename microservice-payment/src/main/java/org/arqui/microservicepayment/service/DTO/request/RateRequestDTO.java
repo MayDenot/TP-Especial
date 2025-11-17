@@ -16,7 +16,5 @@ public class RateRequestDTO {
   @NotNull(message = "El precio extra no puede ser nulo")
   private Double tarifaExtra;
   @NotNull(message = "La fecha no puede ser nula")
-  private LocalDateTime fechaActualizacion;
-  @NotNull(message = "La vigencia no puede ser nula")
-  private Boolean vigente;
+  private LocalDateTime fechaInicio;
 }

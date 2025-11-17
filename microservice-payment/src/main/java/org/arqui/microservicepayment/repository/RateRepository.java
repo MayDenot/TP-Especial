@@ -15,13 +15,11 @@ public interface RateRepository extends JpaRepository<Rate, Long> {
   @Query("""
       SELECT r
       FROM Rate r
-      WHERE r.fechaActualizacion = (
-            SELECT MAX(r2.fechaActualizacion)
+      WHERE r.fechaInicio = (
+            SELECT MAX(r2.fechaInicio)
             FROM Rate r2
-            WHERE r2.fechaActualizacion <= :fechaViaje
+            WHERE r2.fechaInicio <= :fechaViaje
       )
   """)
   Optional<Rate> findRateByDate(LocalDateTime fechaViaje);
-
-  Optional<Rate> findByVigenteTrue();
 }

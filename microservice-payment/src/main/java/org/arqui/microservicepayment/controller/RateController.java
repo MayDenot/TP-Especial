@@ -81,6 +81,7 @@ public class RateController {
     }
   }
 
+  // Traer tarifa segun fecha de viaje
   @GetMapping("/byDate")
   public ResponseEntity<?> getRateByDate(@RequestParam(required = false) String fecha) {
     try {
@@ -95,7 +96,6 @@ public class RateController {
         fechaConsulta = LocalDateTime.now();
       }
 
-      System.out.println("Buscando tarifa para fecha: " + fechaConsulta);
       RateResponseDTO rate = rateService.findRateByDate(fechaConsulta);
       return ResponseEntity.ok(rate);
     } catch (EntityNotFoundException e) {

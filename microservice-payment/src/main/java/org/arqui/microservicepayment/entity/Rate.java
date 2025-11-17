@@ -20,7 +20,5 @@ public class Rate {
   @Column
   private Double tarifaExtra;
   @Column(unique = true)
-  private LocalDateTime fechaActualizacion;
-  @Column
-  private Boolean vigente;
+  private LocalDateTime fechaInicio; // Fecha a partir de la cual se habilita la tarifa
 }
