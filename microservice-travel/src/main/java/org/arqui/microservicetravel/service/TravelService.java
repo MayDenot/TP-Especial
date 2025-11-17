@@ -148,7 +148,7 @@ public class TravelService {
                 tarifaACobrar = rate.getTarifaExtra();
             tarifaACobrar = rate.getTarifa();
 
-            travel.setCosto(tarifaACobrar*travel.getKmRecorridos());
+            travel.setCosto(tarifaACobrar * travel.getKmRecorridos());
 
             try {
                 ActualizarEstadoParadaRequestDTO scooterRequest = new ActualizarEstadoParadaRequestDTO(
@@ -170,26 +170,35 @@ public class TravelService {
                 System.err.println("Error al actualizar estado del monopatín: " + e.getMessage());
             }
 
-            return TravelMapper.toResponse(travelFinalizado);
+            travelRepository.save(travel);
+
+            return TravelMapper.toResponse(travel);
         }
 
 
 
-    @Transactional(readOnly = true)
-    public List<ViajeConCostoResponseDTO> calcularCostosDeViajes(Integer anio, Integer mesInicio, Integer mesFin) {
-        System.out.println("TravelService: Calculando costos para periodo " + anio + "/" + mesInicio + "-" + mesFin);
-        List<Travel> viajes = travelRepository.buscarViajesParaFacturacion(anio, mesInicio, mesFin);
-        System.out.println("TravelService: Encontrados " + viajes.size() + " viajes");
+//    @Transactional(readOnly = true)
+//    public List<ViajeConCostoResponseDTO> calcularCostosDeViajes(Integer anio, Integer mesInicio, Integer mesFin) {
+//        System.out.println("TravelService: Calculando costos para periodo " + anio + "/" + mesInicio + "-" + mesFin);
+//        List<Travel> viajes = travelRepository.buscarViajesParaFacturacion(anio, mesInicio, mesFin);
+//        System.out.println("TravelService: Encontrados " + viajes.size() + " viajes");
+//
+//        return viajes.stream()
+//                .map(viaje -> {
+//                    System.out.println("TravelService: Procesando viaje ID=" + viaje.getId_travel() +
+//                            ", fecha=" + viaje.getFecha_hora_inicio());
+//                    return calcularCostoViaje(viaje);
+//                })
+//                .collect(Collectors.toList());
+//    }
 
-        return viajes.stream()
-                .map(viaje -> {
-                    System.out.println("TravelService: Procesando viaje ID=" + viaje.getId_travel() +
-                            ", fecha=" + viaje.getFecha_hora_inicio());
-                    return calcularCostoViaje(viaje);
-                })
-                .collect(Collectors.toList());
+    public List<TravelResponseDTO> viajesFinalizados(Integer anio, Integer mesInicio, Integer mesFin) {
+        List<Travel> viajesTerminados = travelRepository.getViajesFinalizados(anio,mesInicio,mesFin);
+        return viajesTerminados.stream()
+                .map(TravelMapper::toResponse)
+                .toList();
     }
-    
+
 //    private ViajeConCostoResponseDTO calcularCostoViaje(Travel viaje) {
 //        // Validar que el viaje tenga fecha de inicio
 //        if (viaje.getFecha_hora_inicio() == null) {

@@ -70,4 +70,19 @@ public interface TravelRepository extends JpaRepository<Travel, Long> {
         JOIN t.pausas p
     """)
     Integer duracionDePausas();
+
+
+    @Query("""
+        SELECT t
+        FROM Travel t
+        WHERE t.fecha_hora_fin IS NOT NULL
+          AND FUNCTION('YEAR', t.fecha_hora_fin) = :anio
+          AND FUNCTION('MONTH', t.fecha_hora_fin) BETWEEN :mesInicio AND :mesFin
+        ORDER BY t.fecha_hora_fin
+    """)
+    List<Travel> getViajesFinalizados(
+            @Param("anio") Integer anio,
+            @Param("mesInicio") Integer mesInicio,
+            @Param("mesFin") Integer mesFin
+    );
 }

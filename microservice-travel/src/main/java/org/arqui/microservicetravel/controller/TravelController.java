@@ -136,7 +136,7 @@ public class TravelController {
             @RequestParam Integer mesInicio,
             @RequestParam Integer mesFin) {
         try {
-            List<ViajeConCostoResponseDTO> viajes = travelService.calcularCostosDeViajes(anio, mesInicio, mesFin);
+            List<TravelResponseDTO> viajes = travelService.viajesFinalizados(anio, mesInicio, mesFin);
             return ResponseEntity.ok(viajes);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
