@@ -15,5 +15,14 @@ spring:
     init:
       mode: always
 
+springdoc:
+  api-docs:
+    path: /api
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+    tags-sorter: alpha
+  show-actuator: true
+
 server:
   port: 8084

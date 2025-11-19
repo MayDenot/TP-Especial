@@ -1,26 +1,27 @@
 package org.arqui.microservicetravel.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.arqui.microservicetravel.service.DTO.Request.FinalizarViajeRequestDTO;
 import org.arqui.microservicetravel.service.DTO.Request.TravelRequestDTO;
 import org.arqui.microservicetravel.service.DTO.Response.TravelResponseDTO;
 import org.arqui.microservicetravel.service.TravelService;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
-import org.arqui.microservicetravel.service.DTO.Response.ViajeConCostoResponseDTO;
 
 @RestController
 @RequestMapping("/api/travels")
 @RequiredArgsConstructor
+@Tag(name = "Viajes", description = "Operaciones relacionadas a viajes")
 public class TravelController {
     private final TravelService travelService;
 
+    @Operation(summary = "Crear nuevo viaje")
     @PostMapping
     public ResponseEntity<String> saveTravel(@RequestBody TravelRequestDTO travel) {
         try {
@@ -32,6 +33,7 @@ public class TravelController {
         }
     }
 
+    @Operation(summary = "Eliminar viaje por ID")
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteTravel(@PathVariable Long id) {
         try {
@@ -43,6 +45,7 @@ public class TravelController {
         }
     }
 
+    @Operation(summary = "Actualizar viaje por ID")
     @PutMapping("/{id}")
     public ResponseEntity<String> updateTravel(@PathVariable Long id, @RequestBody TravelRequestDTO travel) {
         try {
@@ -54,6 +57,7 @@ public class TravelController {
         }
     }
 
+    @Operation(summary = "Obtener viaje por ID")
     @GetMapping("/{id}")
     public ResponseEntity<?> getTravel(@PathVariable Long id) {
         try{
@@ -65,6 +69,7 @@ public class TravelController {
         }
     }
 
+    @Operation(summary = "Obtener todos los viajes")
     @GetMapping
     public ResponseEntity<?> getAllTravels() {
         try {
@@ -77,6 +82,7 @@ public class TravelController {
 
     }
 
+    @Operation(summary = "Obtener monopatines por cantidad de viajes en un año")
     @GetMapping("/cantidad/{cantidad}/anio/{anio}")
     public ResponseEntity<?> buscarPorCantidadDeViajesYAño(@PathVariable Integer cantidad, @PathVariable Integer anio) throws Exception {
         try {
@@ -88,6 +94,7 @@ public class TravelController {
         }
     }
 
+    @Operation(summary = "Obtener usuarios con mas viajes en un periodo")
     @GetMapping("/fechaInicio/{inicio}/fechaFin/{fin}")
     public ResponseEntity<?> buscarUsuariosConMasViajes(@PathVariable LocalDate inicio, @PathVariable LocalDate fin) throws Exception {
         try {
@@ -98,6 +105,7 @@ public class TravelController {
         }
     }
 
+    @Operation(summary = "Obtener viajes de un usuario en un periodo")
     @GetMapping("/usuario/{userId}")
     public ResponseEntity<?> getViajesPorUsuario(
             @PathVariable Long userId,
@@ -119,6 +127,7 @@ public class TravelController {
         }
     }
 
+    @Operation(summary = "Obtener viajes con costos")
     @GetMapping("/travelsWithCosts")
     public ResponseEntity<?> getViajesConCostos(
             @RequestParam Integer anio,
@@ -136,6 +145,7 @@ public class TravelController {
         }
     }
 
+    @Operation(summary = "Finalizar viaje")
     @PutMapping("/finalizar/{id}")
     public ResponseEntity<?> finalizarViaje(
             @PathVariable Long id,

@@ -13,16 +13,11 @@ import org.arqui.microservicetravel.service.DTO.Request.TravelRequestDTO;
 import org.arqui.microservicetravel.service.DTO.Response.AccountInfoResponseDTO;
 import org.arqui.microservicetravel.service.DTO.Response.RateInfoResponseDTO;
 import org.arqui.microservicetravel.service.DTO.Response.TravelResponseDTO;
-import org.arqui.microservicetravel.service.DTO.Response.ViajeConCostoResponseDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import org.arqui.microservicetravel.entity.Pause;
-
-import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
 
