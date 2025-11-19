@@ -1,14 +1,19 @@
 package org.arqui.microservicepayment.controller;
 
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.arqui.microservicepayment.entity.Rate;
 import org.arqui.microservicepayment.service.DTO.request.RateRequestDTO;
 import org.arqui.microservicepayment.service.DTO.response.BillingResponseDTO;
 import org.arqui.microservicepayment.service.DTO.response.RateResponseDTO;
 import org.arqui.microservicepayment.service.RateService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.Parameter;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -16,9 +21,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/rates")
 @RequiredArgsConstructor
+@Tag(name = "Tarifas", description = "Operaciones relacionadas a tarifas")
 public class RateController {
   private final RateService rateService;
 
+  @Operation(summary = "Crear nueva tarifa")
   @PostMapping
   public ResponseEntity<?> save(@RequestBody RateRequestDTO rateDTO) throws Exception {
     try {
@@ -49,6 +56,16 @@ public class RateController {
     }
   }
 
+  @Operation(summary = "Obtener tarifa por ID",
+     parameters = {
+         @Parameter(
+             name = "id",
+             description = "ID de la tarifa",
+             in = ParameterIn.PATH,
+             example = "1"
+         )
+     }
+  )
   @GetMapping("/{id}")
   public ResponseEntity<RateResponseDTO> findById(@PathVariable Long id) throws Exception {
     try {
@@ -58,6 +75,14 @@ public class RateController {
     }
   }
 
+  @Operation(
+          summary = "Obtener todas las tarifas",
+          description = "Retorna una lista de todas las tarifas disponibles"
+  )
+  @ApiResponses(value = {
+          @ApiResponse(responseCode = "200", description = "Operación exitosa"),
+          @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+  })
   @GetMapping()
   public ResponseEntity<List<?>> findAll() throws Exception {
     try {
@@ -67,6 +92,14 @@ public class RateController {
     }
   }
 
+  @Operation(
+          summary = "Obtener la facturacion dado un año, mes inicio y mes fin",
+          description = "Retorna una facturacion"
+  )
+  @ApiResponses(value = {
+          @ApiResponse(responseCode = "200", description = "Operación exitosa"),
+          @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+  })
   @GetMapping("/billing")
   public ResponseEntity<BillingResponseDTO> obtenerFacturacionPorPeriodo(
           @RequestParam Integer anio,
@@ -81,6 +114,15 @@ public class RateController {
     }
   }
 
+  @Operation(
+          summary = "Obtener la tarifa mas reciente dada una fecha de viaje",
+          description = "Retorna una tarifa"
+  )
+  @ApiResponses(value = {
+          @ApiResponse(responseCode = "200", description = "Operación exitosa"),
+          @ApiResponse(responseCode = "404", description = "No se encontro tarifa para la fecha solicitada"),
+          @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+  })
   // Traer tarifa segun fecha de viaje
   @GetMapping("/byDate")
   public ResponseEntity<?> getRateByDate(@RequestParam(required = false) String fecha) {
