@@ -25,7 +25,11 @@ import java.util.List;
 public class RateController {
   private final RateService rateService;
 
-  @Operation(summary = "Crear nueva tarifa")
+  @Operation(summary = "Crear nueva tarifa", description = "Crea una nueva tarifa en el sistema")
+  @ApiResponses(value = {
+          @ApiResponse(responseCode = "201", description = "Tarifa creada exitosamente"),
+          @ApiResponse(responseCode = "500", description = "Error al crear la tarifa")
+  })
   @PostMapping
   public ResponseEntity<?> save(@RequestBody RateRequestDTO rateDTO) throws Exception {
     try {
@@ -36,6 +40,12 @@ public class RateController {
     }
   }
 
+  @Operation(summary = "Eliminar tarifa", description = "Elimina una tarifa existente por su ID")
+  @ApiResponses(value = {
+          @ApiResponse(responseCode = "204", description = "Tarifa eliminada exitosamente"),
+          @ApiResponse(responseCode = "404", description = "Tarifa no encontrada"),
+          @ApiResponse(responseCode = "500", description = "Error al eliminar la tarifa")
+  })
   @DeleteMapping("/{id}")
   public ResponseEntity<?> delete(@PathVariable Long id) throws Exception {
     try {
@@ -46,6 +56,12 @@ public class RateController {
     }
   }
 
+  @Operation(summary = "Actualizar tarifa", description = "Actualiza una tarifa existente")
+  @ApiResponses(value = {
+          @ApiResponse(responseCode = "200", description = "Tarifa actualizada exitosamente"),
+          @ApiResponse(responseCode = "404", description = "Tarifa no encontrada"),
+          @ApiResponse(responseCode = "500", description = "Error al actualizar la tarifa")
+  })
   @PutMapping("/{id}")
   public ResponseEntity<?> update(@PathVariable Long id, @RequestBody RateRequestDTO rateDTO) throws Exception {
     try {
@@ -56,18 +72,16 @@ public class RateController {
     }
   }
 
-  @Operation(summary = "Obtener tarifa por ID",
-     parameters = {
-         @Parameter(
-             name = "id",
-             description = "ID de la tarifa",
-             in = ParameterIn.PATH,
-             example = "1"
-         )
-     }
-  )
+  @Operation(summary = "Obtener tarifa por ID", description = "Busca y retorna una tarifa específica por su ID")
+  @ApiResponses(value = {
+          @ApiResponse(responseCode = "200", description = "Tarifa encontrada"),
+          @ApiResponse(responseCode = "404", description = "Tarifa no encontrada"),
+          @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+  })
   @GetMapping("/{id}")
-  public ResponseEntity<RateResponseDTO> findById(@PathVariable Long id) throws Exception {
+  public ResponseEntity<RateResponseDTO> findById(
+          @Parameter(description = "ID de la tarifa", example = "1")
+          @PathVariable Long id) throws Exception {
     try {
       return ResponseEntity.ok(rateService.findById(id));
     } catch (Exception e) {
@@ -93,17 +107,21 @@ public class RateController {
   }
 
   @Operation(
-          summary = "Obtener la facturacion dado un año, mes inicio y mes fin",
-          description = "Retorna una facturacion"
+          summary = "Obtener facturación por período",
+          description = "Calcula y retorna la facturación total para un período específico"
   )
   @ApiResponses(value = {
-          @ApiResponse(responseCode = "200", description = "Operación exitosa"),
+          @ApiResponse(responseCode = "200", description = "Facturación calculada exitosamente"),
+          @ApiResponse(responseCode = "400", description = "Parámetros inválidos"),
           @ApiResponse(responseCode = "500", description = "Error interno del servidor")
   })
   @GetMapping("/billing")
   public ResponseEntity<BillingResponseDTO> obtenerFacturacionPorPeriodo(
+          @Parameter(description = "Año de consulta", example = "2024")
           @RequestParam Integer anio,
+          @Parameter(description = "Mes de inicio (1-12)", example = "1")
           @RequestParam Integer mesInicio,
+          @Parameter(description = "Mes de fin (1-12)", example = "12")
           @RequestParam Integer mesFin) throws Exception {
     try {
       BillingResponseDTO facturacion =
@@ -115,17 +133,21 @@ public class RateController {
   }
 
   @Operation(
-          summary = "Obtener la tarifa mas reciente dada una fecha de viaje",
-          description = "Retorna una tarifa"
+          summary = "Obtener tarifa por fecha de viaje",
+          description = "Retorna la tarifa vigente para una fecha específica de viaje. Si no se proporciona fecha, usa la fecha actual."
   )
   @ApiResponses(value = {
-          @ApiResponse(responseCode = "200", description = "Operación exitosa"),
-          @ApiResponse(responseCode = "404", description = "No se encontro tarifa para la fecha solicitada"),
-          @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+          @ApiResponse(responseCode = "200", description = "Tarifa encontrada"),
+          @ApiResponse(responseCode = "404", description = "No se encontró tarifa para la fecha solicitada"),
+          @ApiResponse(responseCode = "500", description = "Error al procesar la fecha")
   })
-  // Traer tarifa segun fecha de viaje
   @GetMapping("/byDate")
-  public ResponseEntity<?> getRateByDate(@RequestParam(required = false) String fecha) {
+  public ResponseEntity<?> getRateByDate(
+          @Parameter(
+                  description = "Fecha de viaje en formato ISO (yyyy-MM-dd'T'HH:mm:ss). Si no se proporciona, usa la fecha actual",
+                  example = "2024-09-15T08:30:00"
+          )
+          @RequestParam(required = false) String fecha) {
     try {
       LocalDateTime fechaConsulta;
       if (fecha != null && !fecha.isEmpty()) {
