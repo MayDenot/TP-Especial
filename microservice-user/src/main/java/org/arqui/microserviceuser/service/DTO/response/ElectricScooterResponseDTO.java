@@ -20,9 +20,9 @@ public class ElectricScooterResponseDTO {
     private Double latitud;
     @Schema(description = "Indica si el monopatín está habilitado", example = "true")
     private Boolean habilitado;
-    @Schema(description = "Nivel de batería del monopatín (0-100)", example = "85")
+    @Schema(description = "Nivel de batería del monopatín (1-100)", example = "85")
     private Integer bateria;
-    @Schema(description = "Tiempo total de uso en minutos", example = "120")
+    @Schema(description = "Tiempo total de uso en segundos", example = "1200")
     private Long tiempoDeUso;
     @Schema(description = "Kilómetros totales recorridos", example = "125.5")
     private Double kilometrosRecorridos;
