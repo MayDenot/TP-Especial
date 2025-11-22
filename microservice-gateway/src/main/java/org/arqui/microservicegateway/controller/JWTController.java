@@ -9,8 +9,8 @@ import org.arqui.microservicegateway.service.dto.login.LoginDTO;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class JWTController {
 
     private final TokenProvider tokenProvider;
-    private final AuthenticationManagerBuilder authenticationManagerBuilder;
+    private final AuthenticationManager authenticationManager;
 
     @PostMapping()
     public ResponseEntity<JWTToken> authorize(@Valid @RequestBody LoginDTO request ) {
@@ -34,7 +34,7 @@ public class JWTController {
                 request.getPassword()
         );
 
-        Authentication authentication = authenticationManagerBuilder.getObject().authenticate( authenticationToken );
+        Authentication authentication = authenticationManager.authenticate( authenticationToken );
         SecurityContextHolder.getContext().setAuthentication( authentication );
         final var jwt = tokenProvider.createToken( authentication );
         HttpHeaders httpHeaders = new HttpHeaders();
