@@ -47,7 +47,6 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
                         .requestMatchers( "/api/scooters/**").hasAuthority( AutorityConstant._ADMIN )
                         .requestMatchers(HttpMethod.GET, "/api/accounts/anular/{id]").hasAuthority( AutorityConstant._ADMIN )
-                        .anyRequest().authenticated()
                 )
                 .httpBasic( Customizer.withDefaults() )
                 .addFilterBefore( new JwtFilter( this.tokenProvider ), UsernamePasswordAuthenticationFilter.class );

@@ -1,15 +1,5 @@
 server:
-  port: 8080
-
-eureka:
-  client:
-    fetch-registry: true
-    register-with-eureka: true
-    service-url:
-      default-zone: http://localhost:8761/eureka
-  instance:
-    hostname: localhost
-
+  port: 8089
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -24,18 +14,54 @@ spring:
     gateway:
       mvc:
         routes:
-          - id: microestudiante
-            uri: lb://microestudiante
+
+          # ------------------------------
+          # MICROSERVICE ELECTRIC SCOOTER
+          # ------------------------------
+          - id: microservice-electric_scooter
+            uri: lb://microservice-electric_scooter
             predicates:
-              - Path=/api/estudiantes/**
-          - id: microcarrera
-            uri: lb://microcarrera
+              - Path=/api/scooters/**
+
+          # ------------------------------
+          # MICROSERVICE PAYMENT
+          # ------------------------------
+          - id: microservice-payment
+            uri: lb://microservice-payment
             predicates:
-              - Path=/api/carreras/**
-          - id: microinscripcion
-            uri: lb://microinscripcion
+              - Path=/api/rates/**
+
+          # ------------------------------
+          # MICROSERVICE STOP
+          # ------------------------------
+          - id: microservice-stop
+            uri: lb://microservice-stop
             predicates:
-              - Path=/api/inscripciones/**
+              - Path=/api/stops/**
+
+          # ------------------------------
+          # MICROSERVICE TRAVEL
+          # ------------------------------
+          - id: microservice-travel
+            uri: lb://microservice-travel
+            predicates:
+              - Path=/api/travels/**
+
+          # ------------------------------
+          # MICROSERVICE USER
+          # ------------------------------
+          # API de cuentas
+          - id: microservice-user-accounts
+            uri: lb://microservice-user
+            predicates:
+              - Path=/api/accounts/**
+
+          # API de usuarios
+          - id: microservice-user-users
+            uri: lb://microservice-user
+            predicates:
+              - Path=/api/users/**
+
 logging:
   level:
     org.springframework.cloud.gateway: DEBUG
