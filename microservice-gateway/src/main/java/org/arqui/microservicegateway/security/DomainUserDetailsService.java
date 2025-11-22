@@ -30,15 +30,19 @@ public class DomainUserDetailsService implements UserDetailsService {
     @Override
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(final String username ) {
-        log.debug("Authenticating {}", username);
-
-        //final var user = this.userRepository.findOneWithAuthoritiesByUsernameIgnoreCase( username ).orElseThrow();
-        //return this.createSpringSecurityUser( user );
+        log.info("Cargando usuario: {}", username);
+        log.info("Buscando en BD con username en minúsculas: {}", username.toLowerCase());
 
         return userRepository
                 .findOneWithAuthoritiesByUsernameIgnoreCase( username.toLowerCase() )
-                .map( this::createSpringSecurityUser )
-                .orElseThrow( () -> new UsernameNotFoundException( "El usuario " + username + " no existe" ) );
+                .map( user -> {
+                    log.info("Usuario encontrado: {}, Autoridades: {}", user.getUsername(), user.getAuthorities().size());
+                    return this.createSpringSecurityUser(user);
+                })
+                .orElseThrow( () -> {
+                    log.error("Usuario no encontrado: {}", username);
+                    return new UsernameNotFoundException( "El usuario " + username + " no existe" );
+                });
     }
 
     private UserDetails createSpringSecurityUser( User user ) {
