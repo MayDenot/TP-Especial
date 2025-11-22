@@ -45,8 +45,4 @@ public class User{
 
     private List<Account> cuentas;
 
-    //Hace falta un constructor inicializando el array vacío?
-
-    // Todos los monopatines que ha usado el usuario (se obtiene desde Travel)
-    // Crear model de Travel en este microservicio
 }
