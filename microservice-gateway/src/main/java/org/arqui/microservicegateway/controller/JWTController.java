@@ -1,6 +1,12 @@
 package org.arqui.microservicegateway.controller;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.arqui.microservicegateway.security.jwt.JwtFilter;
@@ -23,12 +29,36 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/authenticate" )
 @RequiredArgsConstructor
+@Tag(name = "Autenticación", description = "Gestión de autenticación y tokens JWT")
 public class JWTController {
 
     private static final Logger log = LoggerFactory.getLogger(JWTController.class);
 
     private final TokenProvider tokenProvider;
     private final AuthenticationManager authenticationManager;
+
+    @Operation(
+            summary = "Autenticar usuario",
+            description = "Valida las credenciales del usuario y genera un token JWT para acceder a los recursos protegidos"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Autenticación exitosa - Token JWT generado",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = JWTToken.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "Credenciales inválidas"
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Datos de entrada inválidos"
+            )
+    })
 
     @PostMapping()
     public ResponseEntity<JWTToken> authorize(@Valid @RequestBody LoginDTO request ) {
@@ -57,8 +87,10 @@ public class JWTController {
         }
     }
 
-    static class JWTToken {
 
+    @Schema(description = "Respuesta con el token JWT")
+    static class JWTToken {
+        @Schema(description = "Token JWT para autenticación", example = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...")
         private String idToken;
 
         JWTToken(String idToken) {

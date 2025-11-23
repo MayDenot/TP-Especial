@@ -19,7 +19,7 @@ public class OpenAPIConfig {
                         .version("1.0.0")
                         .description("API REST para la gestión de monopatines eléctricos con MongoDB")
                         .contact(new Contact()
-                                .name("Equipo de Desarrollo")
+                                .name("Valentín Díaz")
                                 .email("desarrollo@scooters.com"))
                         .license(new License()
                                 .name("Apache 2.0")
