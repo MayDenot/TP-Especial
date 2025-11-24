@@ -19,7 +19,7 @@ spring:
           # MICROSERVICE ELECTRIC SCOOTER
           # ------------------------------
           - id: microservice-electric_scooter
-            uri: lb://microservice-electric_scooter
+            uri: http://localhost:8082
             predicates:
               - Path=/api/scooters/**
 
@@ -27,7 +27,7 @@ spring:
           # MICROSERVICE PAYMENT
           # ------------------------------
           - id: microservice-payment
-            uri: lb://microservice-payment
+            uri: http://localhost:8083
             predicates:
               - Path=/api/rates/**
 
@@ -35,7 +35,7 @@ spring:
           # MICROSERVICE STOP
           # ------------------------------
           - id: microservice-stop
-            uri: lb://microservice-stop
+            uri: http://localhost:8081
             predicates:
               - Path=/api/stops/**
 
@@ -43,7 +43,7 @@ spring:
           # MICROSERVICE TRAVEL
           # ------------------------------
           - id: microservice-travel
-            uri: lb://microservice-travel
+            uri: http://localhost:8084
             predicates:
               - Path=/api/travels/**
 
@@ -52,13 +52,13 @@ spring:
           # ------------------------------
           # API de cuentas
           - id: microservice-user-accounts
-            uri: lb://microservice-user
+            uri: http://localhost:8085
             predicates:
               - Path=/api/accounts/**
 
           # API de usuarios
           - id: microservice-user-users
-            uri: lb://microservice-user
+            uri: http://localhost:8085
             predicates:
               - Path=/api/users/**
 
