@@ -7,7 +7,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -35,18 +34,6 @@ public interface TravelRepository extends JpaRepository<Travel, Long> {
         SELECT t
         FROM Travel t
         LEFT JOIN FETCH t.pausas
-        WHERE FUNCTION('YEAR', t.fecha_hora_inicio) = :anio
-        AND FUNCTION('MONTH', t.fecha_hora_inicio) BETWEEN :mesInicio AND :mesFin
-        ORDER BY t.fecha_hora_inicio
-    """)
-    List<Travel> buscarViajesParaFacturacion(@Param("anio") Integer anio, 
-                                              @Param("mesInicio") Integer mesInicio, 
-                                              @Param("mesFin") Integer mesFin);
-
-    @Query("""
-        SELECT t
-        FROM Travel t
-        LEFT JOIN FETCH t.pausas
         WHERE t.usuario = :userId
         AND DATE(t.fecha_hora_inicio) BETWEEN :fechaInicio AND :fechaFin
         ORDER BY t.fecha_hora_inicio DESC
@@ -60,8 +47,9 @@ public interface TravelRepository extends JpaRepository<Travel, Long> {
         SELECT SUM(p.duracion)
         FROM Travel t
         JOIN t.pausas p
+        WHERE t.id_travel = :id_travel
     """)
-    Integer duracionDePausas();
+    Integer duracionDePausas(@Param("id_viaje") Long id_viaje);
 
 
     @Query("""
