@@ -65,7 +65,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/authenticate").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
                         .requestMatchers( "/api/scooters/**").hasAuthority( AutorityConstant._ADMIN )
-                        .requestMatchers(HttpMethod.GET, "/api/accounts/anular/{id]").hasAuthority( AutorityConstant._ADMIN )
+                        .requestMatchers(HttpMethod.PUT, "/api/accounts/{id}/anular").hasAuthority( AutorityConstant._ADMIN )
                         .requestMatchers(HttpMethod.POST, "/api/usuarios").permitAll()
                 )
                 .httpBasic( Customizer.withDefaults() )
