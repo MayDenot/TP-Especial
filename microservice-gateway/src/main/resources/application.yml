@@ -12,6 +12,8 @@ spring:
     show-sql: true
     database: mysql
   cloud:
+    compatibility-verifier:
+      enabled: false
     gateway:
       mvc:
         routes:
