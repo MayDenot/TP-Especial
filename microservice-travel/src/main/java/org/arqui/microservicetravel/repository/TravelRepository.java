@@ -47,7 +47,7 @@ public interface TravelRepository extends JpaRepository<Travel, Long> {
         SELECT SUM(p.duracion)
         FROM Travel t
         JOIN t.pausas p
-        WHERE t.id_travel = :id_travel
+        WHERE t.id_travel = :id_viaje
     """)
     Integer duracionDePausas(@Param("id_viaje") Long id_viaje);
 

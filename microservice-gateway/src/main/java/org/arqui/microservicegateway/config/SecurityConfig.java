@@ -61,24 +61,33 @@ public class SecurityConfig {
                 .sessionManagement( s -> s.sessionCreationPolicy( SessionCreationPolicy.STATELESS ) );
         http
                 .securityMatcher("/api/**" )
-                .authorizeHttpRequests( authz -> authz
-                        .requestMatchers(HttpMethod.POST, "/api/authenticate").permitAll() //autenticar gateway
-                        .requestMatchers(HttpMethod.GET, "/api/users/**").hasAuthority(AutorityConstant._ADMIN)//get usuario
-                        .requestMatchers(HttpMethod.PUT, "/api/users/**").hasAuthority(AutorityConstant._ADMIN) //put usuario
-                        .requestMatchers(HttpMethod.DELETE, "/api/users/**").hasAuthority(AutorityConstant._ADMIN) //delete usuario
-                        .requestMatchers(HttpMethod.GET,
-                                "/api/users/fechaInicio/**/fechaFin/**/tipoCuenta/**").hasAuthority(AutorityConstant._ADMIN) // get manopatínes mas usados
-                        .requestMatchers("/api/users/cercanos/{latitud}/{longitud}").hasAuthority(AutorityConstant._USER) // get monopatínes cercanos
-                        .requestMatchers("/api/users/*/usos").hasAuthority(AutorityConstant._USER) // get usos
-                        .requestMatchers( "/api/scooters/**").hasAuthority( AutorityConstant._ADMIN )
-                        .requestMatchers(HttpMethod.PUT, "/api/accounts/{id}/anular").hasAuthority( AutorityConstant._ADMIN )
-                        .requestMatchers("/api/accounts/**").hasAuthority(AutorityConstant._ADMIN)
+                .authorizeHttpRequests(authz -> authz
+                        // Rutas públicas
+                        .requestMatchers(HttpMethod.POST, "/api/authenticate").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/usuarios").permitAll()
-                        .requestMatchers("/api/rates/**").hasAuthority (AutorityConstant._ADMIN)
-                        .requestMatchers("/api/travels/**").hasAuthority (AutorityConstant._ADMIN)
-                        .requestMatchers("/api/stops/**").hasAuthority (AutorityConstant._ADMIN)
 
+                        // Rutas específicas de USER
+                        .requestMatchers("/api/users/cercanos/{latitud}/{longitud}").hasAuthority(AutorityConstant._USER)
+                        .requestMatchers("/api/users/{id}/usos").hasAuthority(AutorityConstant._USER)
 
+                        .requestMatchers(HttpMethod.GET,
+                                "/api/users/fechaInicio/{fechaInicio}/fechaFin/{fechaFin}/tipoCuenta/{tipoCuenta}")
+                        .hasAuthority(AutorityConstant._ADMIN)
+
+                        // Rutas genéricas de ADMIN
+                        .requestMatchers(HttpMethod.GET, "/api/users/**").hasAuthority(AutorityConstant._ADMIN)
+                        .requestMatchers(HttpMethod.PUT, "/api/users/**").hasAuthority(AutorityConstant._ADMIN)
+                        .requestMatchers(HttpMethod.DELETE, "/api/users/**").hasAuthority(AutorityConstant._ADMIN)
+
+                        // Otros endpoints - ADMIN
+                        .requestMatchers("/api/scooters/**").hasAuthority(AutorityConstant._ADMIN)
+                        .requestMatchers(HttpMethod.PUT, "/api/accounts/{id}/anular").hasAuthority(AutorityConstant._ADMIN)
+                        .requestMatchers("/api/accounts/**").hasAuthority(AutorityConstant._ADMIN)
+                        .requestMatchers("/api/rates/**").hasAuthority(AutorityConstant._ADMIN)
+                        .requestMatchers("/api/travels/**").hasAuthority(AutorityConstant._ADMIN)
+                        .requestMatchers("/api/stops/**").hasAuthority(AutorityConstant._ADMIN)
+
+                        .anyRequest().authenticated()
                 )
                 .httpBasic( Customizer.withDefaults() )
                 .addFilterBefore( new JwtFilter( this.tokenProvider ), UsernamePasswordAuthenticationFilter.class );
